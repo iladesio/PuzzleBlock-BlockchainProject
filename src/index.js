@@ -7,7 +7,7 @@ var constants = require('./constants');
 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
 
 async function deployContracts() {
-    let contractsInfo = [];
+    let contractsInfo = {};
     
     console.log("Total number of contracts to deploy:", constants.CONTRACTS.length);
 
@@ -27,19 +27,37 @@ async function deployContracts() {
             
             console.log("Contract Address:", newContract.options.address);
 
-            // Aggiungi le informazioni del contratto a contractsInfo
-            contractsInfo.push({
-                name: contractData['name'],
-                address: newContract.options.address,
-                abi: ABI,
-                bytecode: bytecode
-            });
+            contractsInfo[contractData['name']] = newContract.options.address
+
+            fs.writeFileSync(constants.CONTRACTS_JSON, JSON.stringify(contractsInfo, null, 2));
+            console.log('Contracts information has been saved to ' + constants.CONTRACTS_JSON);
+
         } catch (error) {
             console.error("Error deploying contract:", contractData['name'], error);
         }
     }
-    fs.writeFileSync(constants.CONTRACTS_JSON, JSON.stringify(contractsInfo, null, 2));
-    console.log('Contracts information has been saved to ' + constants.CONTRACTS_JSON);
+    
 }
 
-deployContracts();
+
+async function startEndPoint() {
+    const express = require('express');
+    const bodyParser = require('body-parser');
+    console.log("Current directory:", __dirname);
+    const app = express();
+    app.use(bodyParser.json());
+
+    const helloworld = require('./api/user/helloworld');
+    const registerUser = require('./api/user/register')
+    // Mount the helloworld route
+    app.use('/api/user/helloworld', helloworld);
+    app.use('/api/user/register', registerUser);
+    
+    
+    app.listen(constants.PORT, () => console.log(`web server listening on port ${constants.PORT}!`))
+
+    
+}
+
+//deployContracts();
+startEndPoint()
