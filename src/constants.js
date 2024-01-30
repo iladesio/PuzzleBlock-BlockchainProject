@@ -1,9 +1,10 @@
 module.exports = Object.freeze({
-    ADMIN_ACCOUNT : '0xbB17bf7a6c0432Ec25E3ea0D53180216b0bb83B8',
+    ADMIN_ACCOUNT : '0x315882EAfFCD39D76b937Fa4Cf11a41067b2e63d',
     CONTRACTS : [
-        { name: 'SimpleTransaction'} //by name you can access to the file json with concat the name
-       // { name: 'ContractName2'}
+        { name: 'SimpleTransaction'},//by name you can access to the file json with concat the name
+        { name: 'GameManager'}
       ],
-    CONTRACTS_JSON : '/Users/ilariadesio/Desktop/Computerscience/PuzzleBlock-BlockchainProject/src/contracts/contracts.json'
+    CONTRACTS_JSON : './src/contracts/contracts.json',
+    PORT: 3000
 });
 
