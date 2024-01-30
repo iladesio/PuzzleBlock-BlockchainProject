@@ -51,7 +51,7 @@ async function startEndPoint() {
     const registerUser = require('./api/user/register')
     // Mount the helloworld route
     app.use('/api/user/helloworld', helloworld);
-    app.use('/api/user/register', registerUser);
+    app.use('/api/user', registerUser);
     
     
     app.listen(constants.PORT, () => console.log(`web server listening on port ${constants.PORT}!`))
