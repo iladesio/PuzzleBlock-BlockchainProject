@@ -1,5 +1,10 @@
 {
+  "type": "commonjs",
   "dependencies": {
     "web3": "^4.3.0"
+  },
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "node ./src/index.js"
   }
 }
