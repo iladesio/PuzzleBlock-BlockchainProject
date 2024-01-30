@@ -1,4 +1,5 @@
 // helloworld.js located in /api/user
+const { Console } = require('console');
 const express = require('express')
 const router = express.Router();
 
@@ -8,6 +9,7 @@ router.post('/register', (req, res) => {
     const path = require('path');
     const ethUtil = require('ethereumjs-util');
     const keccak256 = require('keccak');
+    const EthereumTx = require('ethereumjs-tx').Transaction
 
     userAddress = req.body.address
 
@@ -28,8 +30,8 @@ router.post('/register', (req, res) => {
     const transaction = {
         'from': userAddress,
         'value': '0x0',
-        'gas': '0x20c855800',
-        'gasLimit': '0x5208',
+        'gas': '0x53FC',
+        'gasLimit': '0x746A528800',
         'nonce': '0x1',
         'data': functionCall, 
     };
@@ -45,7 +47,7 @@ router.post('/register', (req, res) => {
     ]);*/
 
     // Crea un'istanza di EthereumTx con i dati della transazione
-    const tx = new EthereumTx(transaction, { chain: 'mainnet', hardfork: 'merge' });
+    const tx = new EthereumTx(transaction);
 
     // Ottieni la rappresentazione RLP della transazione senza la firma
     const unsignedTransactionData = '0x' + tx.serialize().toString('hex');
@@ -56,7 +58,7 @@ router.post('/register', (req, res) => {
     console.log('Unsigned Transaction Data:', unsignedTransactionData.toString('hex'));
     console.log('Hash of Transaction Data:', hashOfTransactionData);
     res.json({"unsignedTransactionData": unsignedTransactionData.toString('hex'), "hash_transaction": hashOfTransactionData})
-
+    return res;
     /*0x15dec2ec4d4fed4f2ad0811910191d475e7d2d82e25f4a49221cb307d5ff688d3d8fcde49dbf19d96b40874165651f323a1834c0d31e8f73491af820bf5ffb771b*/
     
     
@@ -79,7 +81,7 @@ router.post('/register', (req, res) => {
     });*/
 
     // Call your contract function
-    contract.methods.registerUser().send({
+    /*contract.methods.registerUser().send({
         from: userAddress
     })
     .on('transactionHash', function(hash){
@@ -94,7 +96,7 @@ router.post('/register', (req, res) => {
     });
       
     
-    return res.send(userAddress);
+    return res.send(userAddress);*/
 
 });
 
@@ -119,8 +121,14 @@ signature = req.body.signature;
 
 console.log(signature)
 
-const transactionData = 'cc01808252088000844d3820eb'
+const transactionData = req.body.unsignedTransactionData
 
+console.log("transaction data:",transactionData)
+console.log(typeof(transactionData))
+
+//const transactionData_Buffer=Buffer.from(transactionData.slice(2), 'hex')
+//console.log("transaction data buffer:",transactionData_Buffer)
+//console.log(typeof(transactionData_Buffer))
 
 // Convert the signature to Buffer
 const signatureBuffer = Buffer.from(signature.slice(2), 'hex');

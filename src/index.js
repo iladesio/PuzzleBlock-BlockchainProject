@@ -59,5 +59,5 @@ async function startEndPoint() {
     
 }
 
-//deployContracts();
+deployContracts();
 startEndPoint()
