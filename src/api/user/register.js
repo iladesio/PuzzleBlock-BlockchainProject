@@ -16,19 +16,21 @@ router.post('/register', (req, res) => {
     // Connessione al provider locale di Ethereum
     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
     
-    contractName = 'GameManager';
+    contractName = 'HelloWorld';
     const ABI = require('../../contracts/'+contractName+'.json');
     const contractAddress = require('../../contracts/contracts.json')[contractName];
     console.log(contractAddress)
 
     // Encode the function call
-    const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[2], []);
-
+    //const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[2], []);
+    const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[0], []);
     // Example data
     const transaction = {
-        'gasPrice': '0x53FC',
-        'gasLimit': '0x746A528800',
+        'gasPrice': '0x3E8',
+        'gasLimit': '0x5EEF07',
         'data': functionCall, 
+        'to': '0xB899507F0cB8498940456EdDA56b3B0b73087E6A',
+        'value' : '0xA'
     };
   
     // Ethereum RLP encoding
@@ -124,6 +126,8 @@ router.post('/registerSigned', (req, res) => {
     const rawTransaction_signed = '0x' + tx_signed.serialize().toString('hex');
     
     console.log('Raw Transaction:', rawTransaction_signed);
+    check = tx_signed.verifySignature()
+    console.log("verifica signature : "+ check)
 
     web3.eth.sendSignedTransaction(rawTransaction_signed)
     .on('transactionHash', (hash) => {
