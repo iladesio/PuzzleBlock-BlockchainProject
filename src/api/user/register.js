@@ -29,10 +29,8 @@ router.post('/register', (req, res) => {
     // Example data
     const transaction = {
         'from': userAddress,
-        'value': '0x0',
-        'gas': '0x53FC',
+        'gasPrice': '0x53FC',
         'gasLimit': '0x746A528800',
-        'nonce': '0x1',
         'data': functionCall, 
     };
   
