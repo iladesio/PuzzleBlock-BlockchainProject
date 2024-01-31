@@ -76,31 +76,42 @@ router.post('/registerSigned', (req, res) => {
     signedTx_serialized_string = bytesToHex(tx_signed.serialize())
     console.log("signed serialized transaction:" + signedTx_serialized_string);
 
-    // Convert the signature to Buffer
-    const signatureBuffer = Buffer.from(signature.slice(2), 'hex');
+    // Estrai r, s, e v dalla firma
+   /* const r = signature.slice(0, 66); // Primi 32 byte
+    const s = '0x' + signature.slice(66, 130); // Secondi 32 byte
+    const v = '0x' + signature.slice(130, 132); // Ultimo byte
+*/  
+
+    console.log(signature)
 
     // Extract r, s, and v from the signature
-    const r = signatureBuffer.slice(0, 32);
-    const s = signatureBuffer.slice(32, 64);
-    const v = signatureBuffer.slice(64);
+    const r = '0x'+signature.slice(2, 66);
+    const s = '0x'+signature.slice(66, 130);
+    const v = '0x'+signature.slice(130);
 
-    tx_signed.v = v
-    tx_signed.r = r
-    tx_signed.s = s
 
-    tx_address = tx_signed.getSenderAddress()
-    console.log("Sender Address: " + tx_address)
-    console.log("Signature: " + signature)
-    console.log("s: " + s)
-    console.log("v: " + v)
-    console.log("r: " + r)
+    console.log(r)
+    console.log(s)
+    console.log(v)
+
+    // Crea un oggetto Buffer per s, v, r
+    const sBuffer = hexToBytes(s)
+    const rBuffer = hexToBytes(r)
+    var v_bigint = BigInt(v);
+
+    console.log("sBuffer: " + sBuffer)
+    console.log("rBuffer: " + rBuffer)
+    console.log("v: " + v_bigint)
+
+    //tx_signed._processSignature(vBuffer,rBuffer,sBuffer)
+    var tx_signed_vsr = tx_signed._processSignature(v_bigint, rBuffer, sBuffer)
 
     //console.log(tx_signed)
 
-    const rawTransaction_signed = bytesToHex(tx_signed.serialize());
+    const rawTransaction_signed = bytesToHex(tx_signed_vsr.serialize());
     
     console.log('Raw Transaction:', rawTransaction_signed);
-    check = tx_signed.verifySignature()
+    check = tx_signed_vsr.verifySignature()
     console.log("verifica signature : "+ check)
 
     web3.eth.sendSignedTransaction(rawTransaction_signed)
@@ -117,7 +128,7 @@ router.post('/registerSigned', (req, res) => {
 
 
 
-    return res.json({"result": tx_signed})
+    return res.json({"result": rawTransaction_signed})
 
     
 });
