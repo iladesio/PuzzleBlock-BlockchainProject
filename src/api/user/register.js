@@ -24,11 +24,8 @@ router.post('/register', (req, res) => {
     // Encode the function call
     const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[2], []);
 
-    unsignedTransaction = {"from": userAddress, "data": functionCall}
-
     // Example data
     const transaction = {
-        'from': userAddress,
         'gasPrice': '0x53FC',
         'gasLimit': '0x746A528800',
         'data': functionCall, 
@@ -47,6 +44,9 @@ router.post('/register', (req, res) => {
     // Crea un'istanza di EthereumTx con i dati della transazione
     const tx = new EthereumTx(transaction);
 
+    
+    //tx.from = userAddress
+
     // Ottieni la rappresentazione RLP della transazione senza la firma
     const unsignedTransactionData = '0x' + tx.serialize().toString('hex');
 
@@ -57,115 +57,85 @@ router.post('/register', (req, res) => {
     console.log('Hash of Transaction Data:', hashOfTransactionData);
     res.json({"unsignedTransactionData": unsignedTransactionData.toString('hex'), "hash_transaction": hashOfTransactionData})
     return res;
-    /*0x15dec2ec4d4fed4f2ad0811910191d475e7d2d82e25f4a49221cb307d5ff688d3d8fcde49dbf19d96b40874165651f323a1834c0d31e8f73491af820bf5ffb771b*/
-    
-    
-
-    //res.json({"contractName": contractName, "functionCall": functionCall, "contractAddress": contractAddress, "from": userAddress})
-
-    //const contract = new web3.eth.Contract(ABI, contractAddress);
-    
-    /*const message = {
-        address: contractAddress
-    }
-    //generate signature
-    web3.eth.personal.sign(
-        "Hello world",
-        "0x5b8f1310A956ee1521A7bB56160451C786289aa9"
-    )
-    .then((signature) => {
-        // do something here with the signature
-        console.log(signature)
-    });*/
-
-    // Call your contract function
-    /*contract.methods.registerUser().send({
-        from: userAddress
-    })
-    .on('transactionHash', function(hash){
-    console.log('Transaction Hash:', hash);
-    })
-    .on('confirmation', function(confirmationNumber, receipt){
-    console.log('Confirmation Number:', confirmationNumber);
-    console.log('Receipt:', receipt);
-    })
-    .on('error', function(error) {
-    console.error('Error:', error);
-    });
-      
-    
-    return res.send(userAddress);*/
-
+     
 });
 
 
 router.post('/registerSigned', (req, res) => {
-   // Example data
-   /*const transaction = {
-    'from': req.body.from,
-    'value': req.body.value,
-    'gasPrice': req.body.gasPrice,
-    'gasLimit': req.body.gasLimit,
-    'nonce': req.body.nonce,
-    'data': req.body.data, 
-};*/
-
-const {Web3} = require('web3'); // Importare Web3 correttamente
-const EthereumTx = require('ethereumjs-tx').Transaction;
-
-web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
-
-signature = req.body.signature;
-
-console.log(signature)
-
-const transactionData = req.body.unsignedTransactionData
-
-console.log("transaction data:",transactionData)
-console.log(typeof(transactionData))
-
-//const transactionData_Buffer=Buffer.from(transactionData.slice(2), 'hex')
-//console.log("transaction data buffer:",transactionData_Buffer)
-//console.log(typeof(transactionData_Buffer))
-
-// Convert the signature to Buffer
-const signatureBuffer = Buffer.from(signature.slice(2), 'hex');
-
-// Extract r, s, and v from the signature
-const r = signatureBuffer.slice(0, 32);
-const s = signatureBuffer.slice(32, 64);
-const v = signatureBuffer.slice(64);
   
+    const {Web3} = require('web3'); // Importare Web3 correttamente
+    const EthereumTx = require('ethereumjs-tx').Transaction;
+    const { rlp, toBuffer } = require('ethereumjs-util');
+
+    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+
+    signature = req.body.signature;
+
+    console.log(signature)
+
+    const transactionData = req.body.unsignedTransactionData
+
+    // Decodifica la rappresentazione RLP
+    const decodedTransaction = rlp.decode(toBuffer(transactionData));
+
+    // Crea un'istanza di EthereumTx con i dati decodificati
+    const tx_signed = new EthereumTx(decodedTransaction);
+
+    //const tx_signed = new EthereumTx(Buffer.from(transactionData))
+
+    const rawTransaction_unsigned = '0x' + tx_signed.serialize().toString('hex');
+    
+    console.log('Raw Transaction Unsigned:', rawTransaction_unsigned);
+
+    //const transactionData_Buffer=Buffer.from(transactionData.slice(2), 'hex')
+    //console.log("transaction data buffer:",transactionData_Buffer)
+    //console.log(typeof(transactionData_Buffer))
+
+    // Convert the signature to Buffer
+    const signatureBuffer = Buffer.from(signature.slice(2), 'hex');
+
+    // Extract r, s, and v from the signature
+    const r = signatureBuffer.slice(0, 32);
+    const s = signatureBuffer.slice(32, 64);
+    const v = signatureBuffer.slice(64);
+
+    
   // Set the RLP-encoded transaction data
-  const tx = new EthereumTx({
+ /* const tx = new EthereumTx({
     raw : Buffer.from(transactionData, 'hex'),
     r : signatureBuffer.slice(0, 32),
     s : signatureBuffer.slice(32, 64),
     v : signatureBuffer.slice(64),
-  });
-  
-  // Get the raw transaction data (including RLP-encoded transaction data and signature)
-  const rawTransaction = '0x' + tx.serialize().toString('hex');
-  
-  console.log('Raw Transaction:', rawTransaction);
+  });*/
 
-web3.eth.sendSignedTransaction(rawTransaction)
-.on('transactionHash', (hash) => {
-    console.log('Transaction Hash:', hash);
-})
-.on('confirmation', (confirmationNumber, receipt) => {
-    console.log('Confirmation Number:', confirmationNumber);
-    console.log('Receipt:', receipt);
-})
-.on('error', (error) => {
-    console.error('Error sending signed transaction:', error);
-});
+    tx_signed.v = v
+    tx_signed.r = r
+    tx_signed.s = s
 
-// Serializza la transazione firmata
-//const serializedTransaction = signedTransaction.serialize();
+    tx_address = tx_signed.getSenderAddress()
+    console.log("Sender Address: " + tx_address)
+    console.log("Signature: " + signature)
+    console.log("s: " + s)
+    console.log("v: " + v)
+    console.log("r: " + r)
 
-// Invia la transazione alla rete Ethereum
-//const receipt = await web3.eth.sendSignedTransaction('0x' + serializedTransaction.toString('hex'));
+    //console.log(tx_signed)
+
+    const rawTransaction_signed = '0x' + tx_signed.serialize().toString('hex');
+    
+    console.log('Raw Transaction:', rawTransaction_signed);
+
+    web3.eth.sendSignedTransaction(rawTransaction_signed)
+    .on('transactionHash', (hash) => {
+        console.log('Transaction Hash:', hash);
+    })
+    .on('confirmation', (confirmationNumber, receipt) => {
+        console.log('Confirmation Number:', confirmationNumber);
+        console.log('Receipt:', receipt);
+    })
+    .on('error', (error) => {
+        console.error('Error sending signed transaction:', error);
+    });
 
 });
 
