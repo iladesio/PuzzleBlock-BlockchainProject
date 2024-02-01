@@ -19,14 +19,14 @@ router.post('/register', (req, res) => {
     contractName = 'HelloWorld';
     const ABI = require('../../contracts/'+contractName+'.json');
     const contractAddress = require('../../contracts/contracts.json')[contractName];
-    console.log(contractAddress)
+    console.log("Contract Address: " + contractAddress)
 
     // Encode the function call
     //const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[2], []);
-    const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[0], []);
+    const functionCall = web3.eth.abi.encodeFunctionCall(ABI[0], []);
     
     // Example data
-    const { LegacyTransaction } = require('@ethereumjs/tx')    
+    const { FeeMarketEIP1559Transaction  } = require('@ethereumjs/tx')    
 
     const txData = {
         nonce: '0x00',
@@ -34,11 +34,14 @@ router.post('/register', (req, res) => {
         gasLimit: '0x669153',
         to: '0x0000000000000000000000000000000000000000',
         value: '0x00',
-        data: functionCall
+        data: functionCall,
+        chainId:'0x539',
+        maxPriorityFeePerGas: '0x01',
+        maxFeePerGas: '0xff'
     }
-
+    
     const common = Common.custom({ chainId: 1337 })
-    const tx = LegacyTransaction.fromTxData(txData, {common})
+    const tx = FeeMarketEIP1559Transaction .fromTxData(txData)
     
     var transaction_serialized = bytesToHex(tx.serialize())
 
@@ -54,7 +57,7 @@ router.post('/registerSigned', (req, res) => {
     const { Chain, Common, Hardfork } = require('@ethereumjs/common')
     const { hexToBytes, bytesToHex } = require('@ethereumjs/util')
 
-    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+    var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
 
     signature = req.body.signature;
 
@@ -65,14 +68,15 @@ router.post('/registerSigned', (req, res) => {
     console.log(transactionData)
 
     // Decodifica la rappresentazione RLP
-    transactionData_bytes = hexToBytes(transactionData)
+    var transactionData_bytes = hexToBytes(transactionData)
     
     // Example data
-    const { LegacyTransaction } = require('@ethereumjs/tx')    
+    const { FeeMarketEIP1559Transaction } = require('@ethereumjs/tx')    
 
     // Crea un'istanza di EthereumTx con i dati decodificati
-    const tx_signed = LegacyTransaction.fromSerializedTx(transactionData_bytes);
-
+    const common = Common.custom({chainId: 1337});
+    var tx_signed = FeeMarketEIP1559Transaction.fromSerializedTx(transactionData_bytes);
+    
     signedTx_serialized_string = bytesToHex(tx_signed.serialize())
     console.log("signed serialized transaction:" + signedTx_serialized_string);
 
@@ -99,20 +103,27 @@ router.post('/registerSigned', (req, res) => {
     const rBuffer = hexToBytes(r)
     var v_bigint = BigInt(v);
 
+    /*const chainId = 1337;
+
+    if(v_bigint == 27){
+        v_bigint = BigInt(chainId * 2 + 8);
+    }*/
+
+
     console.log("sBuffer: " + sBuffer)
     console.log("rBuffer: " + rBuffer)
     console.log("v: " + v_bigint)
 
     //tx_signed._processSignature(vBuffer,rBuffer,sBuffer)
-    var tx_signed_vsr = tx_signed._processSignature(v_bigint, rBuffer, sBuffer)
-
+    tx_signed = tx_signed._processSignature(v_bigint, rBuffer, sBuffer)
+    //tx_signed_vsr.common = Common.custom({ chainId: 1337 })
     //console.log(tx_signed)
 
-    const rawTransaction_signed = bytesToHex(tx_signed_vsr.serialize());
+    const rawTransaction_signed = bytesToHex(tx_signed.serialize());
     
     console.log('Raw Transaction:', rawTransaction_signed);
-    check = tx_signed_vsr.verifySignature()
-    console.log("verifica signature : "+ check)
+    //check = tx_signed.verifySignature()
+    //console.log("verifica signature : "+ check)
 
     web3.eth.sendSignedTransaction(rawTransaction_signed)
     .on('transactionHash', (hash) => {
@@ -125,8 +136,6 @@ router.post('/registerSigned', (req, res) => {
     .on('error', (error) => {
         console.error('Error sending signed transaction:', error);
     });
-
-
 
     return res.json({"result": rawTransaction_signed})
 
