@@ -3,6 +3,54 @@ const { Console } = require('console');
 const express = require('express')
 const router = express.Router();
 
+async function getNonce(accountAddress) {
+    try {
+        const nonce = await web3.eth.getTransactionCount(accountAddress, "latest");
+        return nonce;
+    } catch (error) {
+        console.error("Errore nel recuperare il nonce:", error);
+        throw error;
+    }
+}
+
+async function getBalance(userAddress) {
+    try {
+        const balance = await web3.eth.getBalance(userAddress);
+        console.log("Saldo dell'utente: ", balance);
+        return balance;
+    } catch (error) {
+        console.error("Errore nel recuperare il saldo:", error);
+    }
+}
+
+async function createTransaction(userAddress,functionCall) {
+    try {
+        const nonce = await getNonce(userAddress);
+        console.log("Nonce dell'account:", nonce);
+        var balance=getBalance(userAddress);
+        console.log("Saldo dell'utente: ", balance);
+
+        const txData = {
+            nonce: '0x' + nonce.toString(16),
+            gasPrice: '0x77359400',
+            gasLimit: '0x669153',
+            to: '0x0000000000000000000000000000000000000000',
+            value: '0x0',
+            data: functionCall,
+            chainId:'0x539',
+            maxPriorityFeePerGas: '0x01',
+            maxFeePerGas: '0xff'
+        };
+
+        // Utilizza txData qui
+        // Ad esempio, invia la transazione o fai altro
+
+        return txData;
+    } catch (error) {
+        console.error("Errore:", error);
+    }
+}
+
 
 router.post('/register', (req, res) => {
     const {Web3} = require('web3'); // Importare Web3 correttamente
@@ -10,12 +58,12 @@ router.post('/register', (req, res) => {
     const { RLP } = require('@ethereumjs/rlp')
     const { Chain, Common, Hardfork } = require('@ethereumjs/common')
     const { bytesToHex } = require('@ethereumjs/util')
-   
-    userAddress = req.body.address
 
-    // Connessione al provider locale di Ethereum
+    userAddress = req.body.address
+    console.log("user address: "+userAddress);
+
     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
-    
+
     contractName = 'HelloWorld';
     const ABI = require('../../contracts/'+contractName+'.json');
     const contractAddress = require('../../contracts/contracts.json')[contractName];
@@ -25,27 +73,24 @@ router.post('/register', (req, res) => {
     //const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[2], []);
     const functionCall = web3.eth.abi.encodeFunctionCall(ABI[0], []);
     
+    createTransaction(userAddress,functionCall).then(txData => {
+        // txData è disponibile qui
+            const { FeeMarketEIP1559Transaction  } = require('@ethereumjs/tx')
+
+            const common = Common.custom({ chainId: 1337 })
+            const tx = FeeMarketEIP1559Transaction.fromTxData(txData)
+            var transactionRLP= bytesToHex(RLP.encode(tx.serialize()))
+            var transaction_hash=bytesToHex(tx.getHashedMessageToSign());
+            
+            var transaction_serialized = bytesToHex(tx.serialize())
+            console.log("transaction_hash: "+transaction_hash);
+            return res.json({"unsignedTransactionData": transactionRLP,"transaction_hash": transaction_hash})
+
+        });
+
+    // Connessione al provider locale di Ethereum
+    
     // Example data
-    const { FeeMarketEIP1559Transaction  } = require('@ethereumjs/tx')    
-
-    const txData = {
-        nonce: '0x00',
-        gasPrice: '0xA',
-        gasLimit: '0x669153',
-        to: '0x0000000000000000000000000000000000000000',
-        value: '0x00',
-        data: functionCall,
-        chainId:'0x539',
-        maxPriorityFeePerGas: '0x01',
-        maxFeePerGas: '0xff'
-    }
-    
-    const common = Common.custom({ chainId: 1337 })
-    const tx = FeeMarketEIP1559Transaction .fromTxData(txData)
-    
-    var transaction_serialized = bytesToHex(tx.serialize())
-
-    return res.json({"unsignedTransactionData": transaction_serialized})
  
 });
 
@@ -76,7 +121,7 @@ router.post('/registerSigned', (req, res) => {
     // Crea un'istanza di EthereumTx con i dati decodificati
     const common = Common.custom({chainId: 1337});
     var tx_signed = FeeMarketEIP1559Transaction.fromSerializedTx(transactionData_bytes);
-    
+
     signedTx_serialized_string = bytesToHex(tx_signed.serialize())
     console.log("signed serialized transaction:" + signedTx_serialized_string);
 
@@ -118,12 +163,14 @@ router.post('/registerSigned', (req, res) => {
     tx_signed = tx_signed._processSignature(v_bigint, rBuffer, sBuffer)
     //tx_signed_vsr.common = Common.custom({ chainId: 1337 })
     //console.log(tx_signed)
+    var sender_add=tx_signed.getSenderAddress();
+    console.log("sender address: "+sender_add);
 
     const rawTransaction_signed = bytesToHex(tx_signed.serialize());
     
     console.log('Raw Transaction:', rawTransaction_signed);
-    //check = tx_signed.verifySignature()
-    //console.log("verifica signature : "+ check)
+    check = tx_signed.verifySignature()
+    console.log("verifica signature : "+ check)
 
     web3.eth.sendSignedTransaction(rawTransaction_signed)
     .on('transactionHash', (hash) => {
