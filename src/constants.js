@@ -1,5 +1,5 @@
 module.exports = Object.freeze({
-    ADMIN_ACCOUNT : '0x2545A48D416fAb37a1e23a687Ea04be511537Ed9',
+    ADMIN_ACCOUNT: '0xAE4B2d7E9856398ab3EC48902415DAF19de2da6E',
     CONTRACTS : [
         { name: 'SimpleTransaction'},//by name you can access to the file json with concat the name
         { name: 'GameManager'},

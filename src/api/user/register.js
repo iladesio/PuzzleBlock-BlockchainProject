@@ -72,7 +72,7 @@ router.post('/register', (req, res) => {
     // Encode the function call
     //const functionCall = new Web3().eth.abi.encodeFunctionCall(ABI[2], []);
     const functionCall = web3.eth.abi.encodeFunctionCall(ABI[0], []);
-    
+    console.log(functionCall);
     createTransaction(userAddress,functionCall).then(txData => {
         // txData è disponibile qui
             const { FeeMarketEIP1559Transaction  } = require('@ethereumjs/tx')

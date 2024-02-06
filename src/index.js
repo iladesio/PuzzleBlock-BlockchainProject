@@ -47,17 +47,39 @@ async function startEndPoint() {
     const app = express();
     app.use(bodyParser.json());
 
+    // Add headers before the routes are defined
+    app.use(function (req, res, next) {
+
+        // Website you wish to allow to connect
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        // Request methods you wish to allow
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+        // Request headers you wish to allow
+        res.setHeader('Access-Control-Allow-Headers', '*');
+
+        // Set to true if you need the website to include cookies in the requests sent
+        // to the API (e.g. in case you use sessions)
+        res.setHeader('Access-Control-Allow-Credentials', true);
+
+        // Pass to next layer of middleware
+        next();
+    });
+
+
     const helloworld = require('./api/user/helloworld');
-    const registerUser = require('./api/user/register')
+    const registerUser = require('./api/user/register');
+    const contractInfo = require('./api/contracts/contractInfo');
     // Mount the helloworld route
     app.use('/api/user/helloworld', helloworld);
     app.use('/api/user', registerUser);
-    
+    app.use('/api/contracts', contractInfo);
+       
     
     app.listen(constants.PORT, () => console.log(`web server listening on port ${constants.PORT}!`))
-
-    
+        
 }
 
-deployContracts();
+//deployContracts();
 startEndPoint()
