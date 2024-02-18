@@ -67,11 +67,8 @@ async function startEndPoint() {
         next();
     });
 
-
-    const helloworld = require('./api/user/helloworld');
     const contractInfo = require('./api/contracts/contractInfo');
     // Mount the helloworld route
-    app.use('/api/user/helloworld', helloworld);
     app.use('/api/contracts', contractInfo);
        
     
@@ -79,5 +76,5 @@ async function startEndPoint() {
         
 }
 
-//deployContracts();
+deployContracts();
 startEndPoint()

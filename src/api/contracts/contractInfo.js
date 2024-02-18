@@ -8,6 +8,7 @@ router.post('/getContractInfo', (req, res) => {
 
     contractName = req.body.contractName;
     contractMethod = req.body.contractMethod;
+
     if(req.body.inputParameters === undefined) inputParameters=[] 
     else inputParameters=req.body.inputParameters
 
@@ -15,24 +16,27 @@ router.post('/getContractInfo', (req, res) => {
 
     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
 
-    const ABI = require('../../contracts/' + contractName + '.json');
+    var ABI = require('../../contracts/' + contractName + '.json');
     const contractAddress = require('../../contracts/contracts.json')[contractName];
     console.log("Contract Address: " + contractAddress);
 
-    
-    // Encode the function call
-    var i = 0;
+    var i=0;
     var found = false;
     var requiresParameters = false
+    console.log(ABI[0]['name'])
+    for (i;i<ABI.length;i+=1){
+        functionElement=ABI[i]
 
-    for (functionElement in ABI) {
         if (functionElement['name'] === contractMethod) {
             found = true;
-            if(functionElement[inputs].length>0) requiresParameters=true
+            console.log(contractMethod)
+            var inputs = functionElement['inputs']
+            
+            if(inputs.length>0) requiresParameters=true
             break;
         }
-        i += 1;
     }
+    
 
     if (!found) {
         console.log('Function not found');
@@ -46,8 +50,10 @@ router.post('/getContractInfo', (req, res) => {
             result: 'inputParameters require'
         });
     }
-
+    console.log(inputParameters);
+    
     const functionCall = web3.eth.abi.encodeFunctionCall(ABI[i], inputParameters);
+    
     console.log(functionCall);
 
     return res.json({ "contractAddress": contractAddress, "data": functionCall });

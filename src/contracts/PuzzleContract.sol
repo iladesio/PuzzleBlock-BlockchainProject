@@ -32,9 +32,8 @@ contract PuzzleBlock {
         emit UserRegistered(_nickname, _userAddress);
     }
 
-    // Funzione per ottenere le informazioni di un utente dato il suo indirizzo
     function getUserInfo(address _userAddress) external view returns (uint256 nickname, address userAddress, uint256 balance) {
-        require(users[_userAddress].userAddress != address(0), "User not found.");
+        if(users[_userAddress].userAddress == address(0)) return (0,_userAddress,0);
         User storage user = users[_userAddress];
         return (user.nickname, user.userAddress, user.balance);
     }
