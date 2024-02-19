@@ -24,6 +24,53 @@
 				"internalType": "address",
 				"name": "_userAddress",
 				"type": "address"
+			},
+			{
+				"internalType": "uint8",
+				"name": "typePowerup",
+				"type": "uint8"
+			}
+		],
+		"name": "buyPowerups",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
+			}
+		],
+		"name": "getPowerups",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "amethystNumber",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "grimoireNumber",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "potionNumber",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
 			}
 		],
 		"name": "getUserInfo",
@@ -114,6 +161,24 @@
 			}
 		],
 		"name": "updateUserSecondaryBalance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint8",
+				"name": "typePowerup",
+				"type": "uint8"
+			}
+		],
+		"name": "usePowerups",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

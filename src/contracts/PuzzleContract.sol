@@ -68,4 +68,55 @@ contract PuzzleBlock {
             else users[_userAddress].secondaryBalance += _amount;
     }
 
+    function usePowerups(address _userAddress, uint8 typePowerup) external {
+        // Verifica che l'utente sia registrato
+        require(users[_userAddress].userAddress != address(0), "User not found.");
+
+        // Aggiorna il numero di powerup in base al tipo (0:Ametista, 1:Grimorio, 2:Pozione)
+        if(typePowerup == 0) { // Ametista
+            require(users[_userAddress].amethystNumber > 0, "Not enough Amethysts.");
+            users[_userAddress].amethystNumber -= 1;
+        } else if(typePowerup == 1) {
+            require(users[_userAddress].grimoireNumber > 0, "Not enough Grimoires.");
+            users[_userAddress].grimoireNumber -= 1;
+        } else if(typePowerup == 2) {
+            require(users[_userAddress].potionNumber > 0, "Not enough Potions.");
+            users[_userAddress].potionNumber -= 1;
+        } else {
+            // Se il tipo di powerup non è riconosciuto, viene lanciato un errore
+            revert("Invalid powerup type.");
+        }
+    }
+
+    function buyPowerups(address _userAddress, uint8 typePowerup) external {
+    // Verifica che l'utente sia registrato
+    require(users[_userAddress].userAddress != address(0), "User not found.");
+
+    // Controlla il tipo di powerup e verifica che l'utente non abbia già 3 powerup di quel tipo prima di incrementarne il numero.
+    //(0:Ametista, 1:Grimorio, 2:Pozione)
+        if(typePowerup == 0) { 
+            require(users[_userAddress].amethystNumber < 3, "Maximum Amethysts reached.");
+            users[_userAddress].amethystNumber += 1;
+        } else if(typePowerup == 1) { 
+            require(users[_userAddress].grimoireNumber < 3, "Maximum Grimoires reached.");
+            users[_userAddress].grimoireNumber += 1;
+        } else if(typePowerup == 2) { 
+            require(users[_userAddress].potionNumber < 3, "Maximum Potions reached.");
+            users[_userAddress].potionNumber += 1;
+        } else {
+            // Se il tipo di powerup non è riconosciuto, viene lanciato un errore
+            revert("Invalid powerup type.");
+        }
+    }
+
+    function getPowerups(address _userAddress) external view returns (uint8 amethystNumber, uint8 grimoireNumber, uint8 potionNumber) {
+        // Verifica che l'utente sia registrato
+        require(users[_userAddress].userAddress != address(0), "User not found.");
+
+        // Restituisce il numero di powerups per l'utente
+        User storage user = users[_userAddress];
+        return (user.amethystNumber, user.grimoireNumber, user.potionNumber);
+    }
+
+    
 }
