@@ -11,6 +11,7 @@ contract PuzzleBlock {
         uint256 secondaryBalance;
         uint24 points;
         uint8 currentLevel;
+        uint8 runCompleted;
         uint8 amethystNumber;
         uint8 grimoireNumber;
         uint8 potionNumber;
@@ -35,6 +36,7 @@ contract PuzzleBlock {
             secondaryBalance: 0,
             points: 0,
             currentLevel: 0,
+            runCompleted: 0,
             amethystNumber: 0,
             grimoireNumber: 0,
             potionNumber: 0
@@ -52,20 +54,14 @@ contract PuzzleBlock {
         uint256 secondaryBalance,
         uint24 points, 
         uint8 currentLevel,
+        uint8 runCompleted,
         uint8 amethystNumber,
         uint8 grimoireNumber,
         uint8 potionNumber) 
     {
-        if(users[_userAddress].userAddress == address(0)) return (address(0),0,0,0,0,0,0,0,0);
+        if(users[_userAddress].userAddress == address(0)) return (address(0),0,0,0,0,0,0,0,0,0);
         User storage user = users[_userAddress];
-        return (user.userAddress,user.nickname,user.primaryBalance,user.secondaryBalance,user.points,user.currentLevel,user.amethystNumber,user.grimoireNumber,user.potionNumber);
-    }
-
-    // Funzione per aggiornare il saldo di un utente
-    function updateUserSecondaryBalance(address _userAddress, uint256 _amount,bool isPrimary) external {
-        require(users[_userAddress].userAddress != address(0), "User not found.");
-        if(isPrimary) users[_userAddress].primaryBalance += _amount;
-            else users[_userAddress].secondaryBalance += _amount;
+        return (user.userAddress,user.nickname,user.primaryBalance,user.secondaryBalance,user.points,user.currentLevel,user.runCompleted,user.amethystNumber,user.grimoireNumber,user.potionNumber);
     }
 
     function usePowerups(address _userAddress, uint8 typePowerup) external {
@@ -90,7 +86,7 @@ contract PuzzleBlock {
 
     function buyPowerups(address _userAddress, uint8 typePowerup) external {
     // Verifica che l'utente sia registrato
-    require(users[_userAddress].userAddress != address(0), "User not found.");
+        require(users[_userAddress].userAddress != address(0), "User not found.");
 
     // Controlla il tipo di powerup e verifica che l'utente non abbia già 3 powerup di quel tipo prima di incrementarne il numero.
     //(0:Ametista, 1:Grimorio, 2:Pozione)
@@ -118,5 +114,45 @@ contract PuzzleBlock {
         return (user.amethystNumber, user.grimoireNumber, user.potionNumber);
     }
 
+    //@typeBalance (1: primary o 2: secondary);
+    //@typeOperation (0: decrement o 1: increment);
+    //@amount quantità di denaro su cui effettuare l'operazione
+    //Funzione per utilizzare il saldo di un utente (incremento o decremento su saldo primario o secondario)
+    function useBalance(address _userAddress, uint8 typeBalance, uint8 typeOperation, uint256 amount) external {
+        require(users[_userAddress].userAddress != address(0), "User not found.");
+        require(typeBalance == 0 || typeBalance == 1, "Invalid balance type.");
+        require(typeOperation == 0 || typeOperation == 1, "Invalid operation type.");
+
+        if (typeBalance == 0) { // Primary Balance
+            if (typeOperation == 0) { // Decrement
+                require(users[_userAddress].primaryBalance >= amount, "Insufficient primary balance.");
+                users[_userAddress].primaryBalance -= amount;
+            } else { // Increment
+                users[_userAddress].primaryBalance += amount;
+            }
+        } else if (typeBalance == 1) { // Secondary Balance
+            if (typeOperation == 0) { // Decrement
+                require(users[_userAddress].secondaryBalance >= amount, "Insufficient secondary balance.");
+                users[_userAddress].secondaryBalance -= amount;
+            } else { // Increment
+                users[_userAddress].secondaryBalance += amount;
+            }
+        }
+    }
+
+    //DA MODIFICARE AFTER
+    function creditToBalance(address _userAddress) external {
+        // Verifica che l'utente sia registrato nel sistema
+        require(users[_userAddress].userAddress != address(0), "User not found.");
+
+        // Ottiene l'utente dal mapping
+        User storage user = users[_userAddress];
+
+        // Aggiunge il saldo secondario al saldo primario
+        user.primaryBalance += user.secondaryBalance;
+        
+        // Azzera il saldo secondario
+        user.secondaryBalance = 0;
+    }
     
 }

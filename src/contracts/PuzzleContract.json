@@ -44,6 +44,19 @@
 				"type": "address"
 			}
 		],
+		"name": "creditToBalance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
+			}
+		],
 		"name": "getPowerups",
 		"outputs": [
 			{
@@ -107,6 +120,11 @@
 			},
 			{
 				"internalType": "uint8",
+				"name": "runCompleted",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
 				"name": "amethystNumber",
 				"type": "uint8"
 			},
@@ -150,17 +168,22 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
+				"internalType": "uint8",
+				"name": "typeBalance",
+				"type": "uint8"
 			},
 			{
-				"internalType": "bool",
-				"name": "isPrimary",
-				"type": "bool"
+				"internalType": "uint8",
+				"name": "typeOperation",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
 			}
 		],
-		"name": "updateUserSecondaryBalance",
+		"name": "useBalance",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
