@@ -114,7 +114,7 @@ contract PuzzleBlock {
         return (user.amethystNumber, user.grimoireNumber, user.potionNumber);
     }
 
-    //@typeBalance (1: primary o 2: secondary);
+    //@typeBalance (0: primary o 1: secondary);
     //@typeOperation (0: decrement o 1: increment);
     //@amount quantità di denaro su cui effettuare l'operazione
     //Funzione per utilizzare il saldo di un utente (incremento o decremento su saldo primario o secondario)
