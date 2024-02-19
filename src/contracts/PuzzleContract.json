@@ -4,15 +4,15 @@
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "nickname",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "nickname",
+				"type": "uint256"
 			}
 		],
 		"name": "UserRegistered",
@@ -29,19 +29,49 @@
 		"name": "getUserInfo",
 		"outputs": [
 			{
-				"internalType": "uint256",
-				"name": "nickname",
-				"type": "uint256"
-			},
-			{
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "balance",
+				"name": "nickname",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "primaryBalance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "secondaryBalance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint24",
+				"name": "points",
+				"type": "uint24"
+			},
+			{
+				"internalType": "uint8",
+				"name": "currentLevel",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "amethystNumber",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "grimoireNumber",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "potionNumber",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -50,14 +80,49 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
+			},
+			{
 				"internalType": "uint256",
 				"name": "_nickname",
 				"type": "uint256"
 			},
 			{
-				"internalType": "address",
-				"name": "_userAddress",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "_primaryBalance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_secondaryBalance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint24",
+				"name": "_points",
+				"type": "uint24"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_currentLevel",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_amethystNumber",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_grimoireNumber",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_potionNumber",
+				"type": "uint8"
 			}
 		],
 		"name": "registerUser",
@@ -74,11 +139,16 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "_newBalance",
+				"name": "_amount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "isPrimary",
+				"type": "bool"
 			}
 		],
-		"name": "updateUserBalance",
+		"name": "updateUserSecondaryBalance",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

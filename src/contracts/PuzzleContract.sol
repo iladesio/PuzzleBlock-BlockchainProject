@@ -5,42 +5,68 @@ contract PuzzleBlock {
    
     // Definizione della struct User per memorizzare le informazioni degli utenti
     struct User {
-        uint256 nickname;
         address userAddress;
-        uint256 balance;
+        uint256 nickname;
+        uint256 primaryBalance;
+        uint256 secondaryBalance;
+        uint24 points;
+        uint8 currentLevel;
+        uint8 amethystNumber;
+        uint8 grimoireNumber;
+        uint8 potionNumber;
     }
 
     // Mapping per associare ogni indirizzo Ethereum a un utente
     mapping(address => User) private users;
 
     // Evento che verrà emesso quando un nuovo utente viene registrato
-    event UserRegistered(uint256 nickname, address userAddress);
+    event UserRegistered(address userAddress,uint256 nickname);
 
     // Funzione per registrare un nuovo utente
-    function registerUser(uint256 _nickname, address _userAddress) external {
+    function registerUser(address _userAddress, uint256 _nickname, uint256 _primaryBalance, uint256 _secondaryBalance,uint24 _points, 
+                        uint8 _currentLevel,uint8 _amethystNumber,uint8 _grimoireNumber,uint8 _potionNumber) external {
         // Assicurati che l'indirizzo non sia già registrato
         require(users[_userAddress].userAddress == address(0), "User already registered.");
 
         // Crea un nuovo utente e lo aggiunge al mapping
         users[_userAddress] = User({
-            nickname: _nickname,
             userAddress: _userAddress,
-            balance: 0
+            nickname: _nickname,
+            primaryBalance: _primaryBalance,
+            secondaryBalance: _secondaryBalance,
+            points: _points,
+            currentLevel: _currentLevel,
+            amethystNumber: _amethystNumber,
+            grimoireNumber: _grimoireNumber,
+            potionNumber: _potionNumber
         });
 
         // Emetti l'evento di registrazione
-        emit UserRegistered(_nickname, _userAddress);
+        emit UserRegistered(_userAddress,_nickname);
     }
 
-    function getUserInfo(address _userAddress) external view returns (uint256 nickname, address userAddress, uint256 balance) {
-        if(users[_userAddress].userAddress == address(0)) return (0,_userAddress,0);
+    function getUserInfo(address _userAddress) external view 
+    returns (
+        address userAddress, 
+        uint256 nickname, 
+        uint256 primaryBalance,
+        uint256 secondaryBalance,
+        uint24 points, 
+        uint8 currentLevel,
+        uint8 amethystNumber,
+        uint8 grimoireNumber,
+        uint8 potionNumber) 
+    {
+        if(users[_userAddress].userAddress == address(0)) return (address(0),0,0,0,0,0,0,0,0);
         User storage user = users[_userAddress];
-        return (user.nickname, user.userAddress, user.balance);
+        return (user.userAddress,user.nickname,user.primaryBalance,user.secondaryBalance,user.points,user.currentLevel,user.amethystNumber,user.grimoireNumber,user.potionNumber);
     }
 
     // Funzione per aggiornare il saldo di un utente
-    function updateUserBalance(address _userAddress, uint256 _newBalance) external {
+    function updateUserSecondaryBalance(address _userAddress, uint256 _amount,bool isPrimary) external {
         require(users[_userAddress].userAddress != address(0), "User not found.");
-        users[_userAddress].balance = _newBalance;
+        if(isPrimary) users[_userAddress].primaryBalance += _amount;
+            else users[_userAddress].secondaryBalance += _amount;
     }
+
 }
