@@ -23,8 +23,7 @@ contract PuzzleBlock {
     event UserRegistered(address userAddress,uint256 nickname);
 
     // Funzione per registrare un nuovo utente
-    function registerUser(address _userAddress, uint256 _nickname, uint256 _primaryBalance, uint256 _secondaryBalance,uint24 _points, 
-                        uint8 _currentLevel,uint8 _amethystNumber,uint8 _grimoireNumber,uint8 _potionNumber) external {
+    function registerUser(address _userAddress, uint256 _nickname) external {
         // Assicurati che l'indirizzo non sia già registrato
         require(users[_userAddress].userAddress == address(0), "User already registered.");
 
@@ -32,13 +31,13 @@ contract PuzzleBlock {
         users[_userAddress] = User({
             userAddress: _userAddress,
             nickname: _nickname,
-            primaryBalance: _primaryBalance,
-            secondaryBalance: _secondaryBalance,
-            points: _points,
-            currentLevel: _currentLevel,
-            amethystNumber: _amethystNumber,
-            grimoireNumber: _grimoireNumber,
-            potionNumber: _potionNumber
+            primaryBalance: 0,
+            secondaryBalance: 0,
+            points: 0,
+            currentLevel: 0,
+            amethystNumber: 0,
+            grimoireNumber: 0,
+            potionNumber: 0
         });
 
         // Emetti l'evento di registrazione

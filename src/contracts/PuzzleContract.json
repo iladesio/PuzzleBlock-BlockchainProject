@@ -88,41 +88,6 @@
 				"internalType": "uint256",
 				"name": "_nickname",
 				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_primaryBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_secondaryBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint24",
-				"name": "_points",
-				"type": "uint24"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_currentLevel",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_amethystNumber",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_grimoireNumber",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_potionNumber",
-				"type": "uint8"
 			}
 		],
 		"name": "registerUser",
