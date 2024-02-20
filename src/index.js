@@ -1,6 +1,9 @@
+require('dotenv').config();
 const fs = require('fs'); // Rimuovere 'node:' per evitare problemi di compatibilità
 const {Web3} = require('web3'); // Importare Web3 correttamente
 const path = require('path');
+const pinataSDK = require('@pinata/sdk');
+
 var constants = require('./constants');
 
 // Connessione al provider locale di Ethereum
@@ -67,14 +70,29 @@ async function startEndPoint() {
         next();
     });
 
-    const contractInfo = require('./api/contracts/contractInfo');
+    const contract = require('./api/contracts/contract');
+    const ipfs = require('./api/ipfs/ipfs');
+    const user = require('./api/user/user')
+
     // Mount the helloworld route
-    app.use('/api/contracts', contractInfo);
-       
-    
+    app.use('/api/contracts', contract);
+    app.use('/api/ipfs', ipfs);
+    app.use('/api/user', user);
+
     app.listen(constants.PORT, () => console.log(`web server listening on port ${constants.PORT}!`))
         
 }
 
+
+
+
+
 deployContracts();
-startEndPoint()
+startEndPoint();
+
+//pinUser({"nickname": "pippo"});
+
+//getPinnedJson('QmU1QE5UZgbdfGj2Nu2Lz7yDeUTQonZCxA8G56qNmNi67e')
+
+//unpinJson('QmU1QE5UZgbdfGj2Nu2Lz7yDeUTQonZCxA8G56qNmNi67e')
+

@@ -1,10 +1,10 @@
 module.exports = Object.freeze({
-    ADMIN_ACCOUNT: '0x9e61b157d346f7B0aEA296e22D9EDBDc223491c6',
+    ADMIN_ACCOUNT: '0x315882EAfFCD39D76b937Fa4Cf11a41067b2e63d',
     CONTRACTS : [
-        { name: 'PuzzleContract'},
-        {name: 'HelloWorld'}
+        { name: 'PuzzleContract'}
       ],
     CONTRACTS_JSON : './src/contracts/contracts.json',
-    PORT: 3000
+    PORT: 3000,
+    PINATA_GATEWAY: 'https://coral-tremendous-wasp-739.mypinata.clouds'
 });
 

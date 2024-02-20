@@ -11,11 +11,30 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "nickname",
+				"name": "ipfsCid",
 				"type": "uint256"
 			}
 		],
 		"name": "UserRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "ipfsCid",
+				"type": "uint256"
+			}
+		],
+		"name": "UserUpdated",
 		"type": "event"
 	},
 	{
@@ -26,56 +45,14 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint8",
-				"name": "typePowerup",
-				"type": "uint8"
+				"internalType": "uint256",
+				"name": "_ipfsCid",
+				"type": "uint256"
 			}
 		],
-		"name": "buyPowerups",
+		"name": "editUser",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_userAddress",
-				"type": "address"
-			}
-		],
-		"name": "creditToBalance",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_userAddress",
-				"type": "address"
-			}
-		],
-		"name": "getPowerups",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "amethystNumber",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "grimoireNumber",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "potionNumber",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -89,54 +66,9 @@
 		"name": "getUserInfo",
 		"outputs": [
 			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
-				"name": "nickname",
+				"name": "ipfsCid",
 				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "primaryBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "secondaryBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint24",
-				"name": "points",
-				"type": "uint24"
-			},
-			{
-				"internalType": "uint8",
-				"name": "currentLevel",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "runCompleted",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "amethystNumber",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "grimoireNumber",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "potionNumber",
-				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -151,57 +83,11 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "_nickname",
+				"name": "_ipfsCid",
 				"type": "uint256"
 			}
 		],
 		"name": "registerUser",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint8",
-				"name": "typeBalance",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "typeOperation",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "useBalance",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint8",
-				"name": "typePowerup",
-				"type": "uint8"
-			}
-		],
-		"name": "usePowerups",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
