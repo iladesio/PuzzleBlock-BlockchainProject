@@ -8,6 +8,7 @@ var constants = require('../../constants');
 router.post('/pinJson', (req, res) => {
 
     jsonObject = req.body.jsonObject
+    filename = req.body.filename
     //const fs = require('fs')
     const { PINATA_API_KEY, SECRET_PINATA_API_KEY } = process.env;
     const pinata = new pinataSDK(PINATA_API_KEY, SECRET_PINATA_API_KEY);
@@ -16,7 +17,7 @@ router.post('/pinJson', (req, res) => {
     //const file = fs.createReadStream(src)
     const options = {
         pinataMetadata: {
-            name: "user_profile"}
+            name: filename}
     };
     
     // We pass in the readable stream for the file, ******and****** the options object.
