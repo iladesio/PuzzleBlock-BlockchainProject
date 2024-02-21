@@ -10,8 +10,8 @@ router.post('/pinJson', (req, res) => {
         jsonObject = req.body.jsonObject
         filename = req.body.filename
         //const fs = require('fs')
-        const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
-        const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
+        const { PINATA_API_KEY, SECRET_PINATA_API_KEY } = process.env;
+        const pinata = new pinataSDK(PINATA_API_KEY, SECRET_PINATA_API_KEY);
 
         //const src = "user.json";
         //const file = fs.createReadStream(src)
@@ -40,13 +40,13 @@ router.post('/pinJson', (req, res) => {
 router.post('/getPinnedJson', async (req, res) => {
     try {
         hash = req.body.hash
-        const { PINATA_GATEWAY_TOKEN_2 } = process.env;
+        const { PINATA_GATEWAY_TOKEN } = process.env;
 
-        url = constants.PINATA_GATEWAY_2 + '/ipfs/' + hash
+        url = constants.PINATA_GATEWAY + '/ipfs/' + hash
 
         console.log(url)
 
-        header = { 'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN_2 }
+        header = { 'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN }
 
         await axios.get(url, {
             maxBodyLength: "Infinity",
@@ -54,7 +54,10 @@ router.post('/getPinnedJson', async (req, res) => {
         }).then((response) => {
             res.json(response.data)
         }).catch(function (error) {
-            throw error.response.data;
+            console.log(error)
+            if (error.response != undefined) throw error.response.data;
+            else if(error.cause != undefined) throw error.cause;
+            else throw "cannot retrieve file from ipfs"
         });
 
     } catch (error) {
