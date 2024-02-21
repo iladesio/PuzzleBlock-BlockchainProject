@@ -23,10 +23,11 @@ router.post('/pinJson', (req, res) => {
     // We pass in the readable stream for the file, ******and****** the options object.
     pinata.pinJSONToIPFS(jsonObject,options).then((result) => {
         //handle results here
-        return res.json({ "result": result.IpfsHash });
+        res.json({ "result": result.IpfsHash });
     }).catch((err) => {
         //handle error here
-        return res.json({"error": "impossible to load data on IPFS"})
+        res.statusCode = 500;
+        res.json("Impossible to load data on IPFS")
     });
 
 });
@@ -49,10 +50,11 @@ router.post('/getPinnedJson', async (req, res) => {
             maxBodyLength: "Infinity",
             headers: header
         });
-        return res.json(ipfs_res.data);
+        res.json(ipfs_res.data);
 
     } catch (error) {
-        return res.json({"error": "Cannot retrieve file"})
+        res.statusCode = 500;
+        res.json("Cannot retrieve file")
     }
 
 });
@@ -67,10 +69,11 @@ router.post('/unpinJson', async (req, res) => {
     // We pass in the readable stream for the file, ******and****** the options object.
     pinata.unpin(hash).then((result) => {
         //handle results here
-        return res.json({ "result": "OK" });
+        res.json({ "result": "OK" });
     }).catch((err) => {
         //handle error here
-        return res.json({"error": "impossible to unpin json"})
+        res.statusCode = 500;
+        res.json("Impossible to unpin json")
     });
 
 });
