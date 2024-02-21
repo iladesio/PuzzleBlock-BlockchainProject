@@ -6,18 +6,18 @@ contract PuzzleBlock {
     // Definizione della struct User per memorizzare le informazioni degli utenti
     struct User {
         address userAddress;
-        uint256 ipfsCid;
+        string ipfsCid;
     }
 
     // Mapping per associare ogni indirizzo Ethereum a un utente
     mapping(address => User) private users;
 
     // Evento che verrà emesso quando un nuovo utente viene registrato
-    event UserRegistered(address userAddress,uint256 ipfsCid);
-    event UserUpdated(address userAddress,uint256 ipfsCid);
+    event UserRegistered(address userAddress,string ipfsCid);
+    event UserUpdated(address userAddress,string ipfsCid);
 
     // Funzione per registrare un nuovo utente
-    function registerUser(address _userAddress, uint256 _ipfsCid) external {
+    function registerUser(address _userAddress, string memory _ipfsCid) external {
         // Assicurati che l'indirizzo non sia già registrato
         require(users[_userAddress].userAddress == address(0), "User already registered.");
 
@@ -31,15 +31,15 @@ contract PuzzleBlock {
         emit UserRegistered(_userAddress,_ipfsCid);
     }
 
-    function getUserInfo(address _userAddress) external view returns ( uint256 ipfsCid )
+    function getUserInfo(address _userAddress) external view returns ( string memory ipfsCid )
     {
-        if(users[_userAddress].userAddress == address(0)) return (0);
+        if(users[_userAddress].userAddress == address(0)) return ("0");
         User storage user = users[_userAddress];
         return (user.ipfsCid);
     }
 
     // Funzione per registrare un nuovo utente
-    function editUser(address _userAddress, uint256 _ipfsCid) external {
+    function editUser(address _userAddress, string memory _ipfsCid) external {
         // Verifica che l'indirizzo sia già registrato
         require(users[_userAddress].userAddress != address(0), "User not found");
 

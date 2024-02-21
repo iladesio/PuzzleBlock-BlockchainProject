@@ -10,9 +10,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "ipfsCid",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "UserRegistered",
@@ -29,9 +29,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "ipfsCid",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "UserUpdated",
@@ -45,9 +45,9 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "_ipfsCid",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "editUser",
@@ -66,9 +66,9 @@
 		"name": "getUserInfo",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "ipfsCid",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -82,9 +82,9 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "_ipfsCid",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "registerUser",

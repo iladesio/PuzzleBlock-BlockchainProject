@@ -1,12 +1,12 @@
 {
-    "userAddress": "0x9e61b157d346f7B0aEA296e22D9EDBDc223491c6",
-    "username": "pippo",
-    "primaryBalance": 0,
-    "secondaryBalance": 0,
-    "points": 1,
-    "currentLevel": 0,
-    "runCompleted": 0,
-    "amethystNumber": 0,
-    "grimoireNumber": 0,
-    "potionNumber": 0
+  "userAddress": "0xDeDeA4dB00a4062A0168494687B86683fbb2E00a",
+  "username": "pippo",
+  "primaryBalance": 0,
+  "secondaryBalance": 0,
+  "points": 1,
+  "currentLevel": 0,
+  "runCompleted": 0,
+  "amethystNumber": 0,
+  "grimoireNumber": 0,
+  "potionNumber": 0
 }

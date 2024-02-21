@@ -6,76 +6,81 @@ const axios = require('axios')
 var constants = require('../../constants');
 
 router.post('/pinJson', (req, res) => {
+    try {
+        jsonObject = req.body.jsonObject
+        filename = req.body.filename
+        //const fs = require('fs')
+        const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
+        const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
 
-    jsonObject = req.body.jsonObject
-    filename = req.body.filename
-    //const fs = require('fs')
-    const { PINATA_API_KEY, SECRET_PINATA_API_KEY } = process.env;
-    const pinata = new pinataSDK(PINATA_API_KEY, SECRET_PINATA_API_KEY);
+        //const src = "user.json";
+        //const file = fs.createReadStream(src)
+        const options = {
+            pinataMetadata: {
+                name: filename
+            }
+        };
 
-    //const src = "user.json";
-    //const file = fs.createReadStream(src)
-    const options = {
-        pinataMetadata: {
-            name: filename}
-    };
-    
-    // We pass in the readable stream for the file, ******and****** the options object.
-    pinata.pinJSONToIPFS(jsonObject,options).then((result) => {
-        //handle results here
-        res.json({ "result": result.IpfsHash });
-    }).catch((err) => {
-        //handle error here
-        res.statusCode = 500;
-        res.json("Impossible to load data on IPFS")
-    });
+        // We pass in the readable stream for the file, ******and****** the options object.
+        pinata.pinJSONToIPFS(jsonObject, options).then((result) => {
+            //handle results here
+            res.json({ "result": result.IpfsHash });
+        }).catch((err) => {
+            //handle error here
+            res.status(500).send("Impossible to load data on IPFS: " + err)
+        });
+
+    } catch (error) {
+        res.status(500).send("Cannot pin file: " + error);
+    }
 
 });
 
 
 router.post('/getPinnedJson', async (req, res) => {
+    try {
+        hash = req.body.hash
+        const { PINATA_GATEWAY_TOKEN_2 } = process.env;
 
-    hash = req.body.hash
-    const { PINATA_GATEWAY_TOKEN} = process.env;
+        url = constants.PINATA_GATEWAY_2 + '/ipfs/' + hash
 
-    url = constants.PINATA_GATEWAY + '/ipfs/' + hash
+        console.log(url)
 
-    console.log(url)
+        header = { 'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN_2 }
 
-    header = {'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN}
-
-    try{
-
-        const ipfs_res = await axios.get(url, {
+        await axios.get(url, {
             maxBodyLength: "Infinity",
             headers: header
+        }).then((response) => {
+            res.json(response.data)
+        }).catch(function (error) {
+            throw error.response.data;
         });
-        res.json(ipfs_res.data);
 
     } catch (error) {
-        res.statusCode = 500;
-        res.json("Cannot retrieve file")
+        res.status(500).send("Cannot retrieve file: " + error);
     }
 
 });
 
 
 router.post('/unpinJson', async (req, res) => {
+    try {
+        hash = req.body.hash
+        const { PINATA_API_KEY, SECRET_PINATA_API_KEY } = process.env;
+        const pinata = new pinataSDK(PINATA_API_KEY, SECRET_PINATA_API_KEY);
 
-    hash = req.body.hash
-    const { PINATA_API_KEY, SECRET_PINATA_API_KEY } = process.env;
-    const pinata = new pinataSDK(PINATA_API_KEY, SECRET_PINATA_API_KEY);
-
-    // We pass in the readable stream for the file, ******and****** the options object.
-    pinata.unpin(hash).then((result) => {
-        //handle results here
-        res.json({ "result": "OK" });
-    }).catch((err) => {
-        //handle error here
-        res.statusCode = 500;
-        res.json("Impossible to unpin json")
-    });
-
+        // We pass in the readable stream for the file, ******and****** the options object.
+        pinata.unpin(hash).then((result) => {
+            //handle results here
+            res.json({ "result": "OK" });
+        }).catch((err) => {
+            //handle error here
+            res.status(500).send("Impossible to unpin json: " + err)
+        });
+    } catch (error) {
+        res.status(500).send("Cannot unpin file: " + error);
+    }
 });
 
 

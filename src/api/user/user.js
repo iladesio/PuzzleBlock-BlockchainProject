@@ -6,42 +6,49 @@ const { Web3 } = require('web3'); // Importare Web3 correttamente
 
 router.post('/userInfo', async (req, res) => {
 
-    var address = req.body.address
-
-    if (address === undefined) {
-        return res.json({ "error": "address must be set" });
-    }
-
-    //given the address, call the PuzzleContract function of getUserInfo. 
-    var web3 = new Web3('http://127.0.0.1:7545');
-
-    const ABI = require('../../contracts/PuzzleContract.json');
-    console.log("ABI: " + ABI)
-    const contractAddress = require('../../contracts/contracts.json')["PuzzleContract"];
-    console.log("contractAddress: " + contractAddress)
-
-    var contract = new web3.eth.Contract(ABI, contractAddress);
-    // Get the current value of my number
     try {
-        var result = await contract.methods.getUserInfo(address).call();
-        if (result == 0) {
-            return res.json({})
-        } else {
-            var userJsonHash = web3.utils.hexToAscii(result.toString(16))
-            try {
-                //invoke post request to localhost:3000/api/ipfs/getPinnedJson
-                axios.post("http://localhost:3000/api/ipfs/getPinnedJson", {
-                    hash: userJsonHash
-                }).then((response) => {
-                    return response
-                });
+        var address = req.body.address
 
-            } catch (error) {
-                return res.json({ "error": "cannot read from IPFS" })
-            }
+        if (address === undefined || address === "") {
+            throw "Address must be set";
+        }
+
+        //given the address, call the PuzzleContract function of getUserInfo. 
+        var web3 = new Web3('http://127.0.0.1:7545');
+
+        const ABI = require('../../contracts/PuzzleContract.json');
+        console.log("ABI: " + ABI)
+        const contractAddress = require('../../contracts/contracts.json')["PuzzleContract"];
+        console.log("contractAddress: " + contractAddress)
+
+        var contract = new web3.eth.Contract(ABI, contractAddress);
+        // Get the current value of my number
+        var result = undefined;
+        try {
+            result = await contract.methods.getUserInfo(address).call();
+        } catch (e) {
+            throw "Error during getUserInfo contract call with input address " + address + ": " + e
+        }
+
+        if (result === undefined)
+            throw "User not found";
+        if (result === '0' || result == 0) {
+            res.json({})
+        } else {
+            var userJsonHash = result;  //web3.utils.hexToAscii(result.toString(16))
+
+            //invoke post request to localhost:3000/api/ipfs/getPinnedJson
+            await axios.post("http://localhost:3000/api/ipfs/getPinnedJson", {
+                hash: userJsonHash
+            }).then((response) => {
+                res.json(response.data)
+            }).catch(function (error) {
+                throw "Cannot read from IPFS: " + error.response.data;
+            });
+
         }
     } catch (error) {
-        return res.json({ "error": error })
+        res.status(500).send(error);
     }
 });
 
@@ -54,16 +61,12 @@ router.post('/register', async (req, res) => {
         if (address === undefined || address === "") {
             throw "Address must be set";
 
-            //return res.json({ "error": "address must be set" });
         }
 
         if (username === undefined || username === "") {
             throw "Username must be set";
 
-            //return res.json({ "error": "username must be set" });
         }
-
-        username = '0x' + Buffer.from(username, 'utf8').toString('hex');
 
         //given the address, call the PuzzleContract function of getUserInfo. 
         var web3 = new Web3('http://127.0.0.1:7545');
@@ -99,17 +102,17 @@ router.post('/register', async (req, res) => {
                     jsonObject: userJson,
                     filename: address
                 }).then((response) => {
-                    console.log(response.data.result)
-                    res.json(response.data.result);
+                    let ret = response.data.result;
+                    console.log("User registered in IPFS with CID: " + ret);
+                    res.json(ret);
                 });
 
             } catch (error) {
-                throw "Cannot read from IPFS";
+                throw "Cannot read from IPFS: " + error.response.data;
             }
         }
     } catch (e) {
-        res.statusCode = 500;
-        res.json(e);
+        res.status(500).send(e);
     }
 });
 

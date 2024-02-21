@@ -41,15 +41,11 @@ router.post('/getContractInfo', (req, res) => {
 
         if (!found) {
             console.log('Function not found');
-            res.status(404).send({
-                result: 'Function not found!'
-            });
+            res.status(404).send('Function not found!');
         }
         if (requiresParameters == true && inputParameters.length == 0) {
             console.log('inputParameters require');
-            res.status(400).send({
-                result: 'inputParameters require'
-            });
+            res.status(400).send('inputParameters require');
         }
         console.log(inputParameters);
 
@@ -60,8 +56,7 @@ router.post('/getContractInfo', (req, res) => {
         res.json({ "contractAddress": contractAddress, "data": functionCall });
     }
     catch (e) {
-        res.statusCode = 500;
-        res.json(e);
+        res.status(500).send(e);
     }
 
 });
