@@ -67,16 +67,11 @@ router.post('/register', async (req, res) => {
             throw "Username must be set";
         }
 
-        try {
-            //invoke post request to localhost:3000/api/ipfs/getPinnedJson
-            axios.post("http://localhost:3000/api/ipfs/checkUsername",{username: username}).then((response) => {
-                let ret = response.data.result;
-                console.log(ret)
-            });
-
-        } catch (error) {
-            throw error.response.data;
-        }
+        //invoke post request to localhost:3000/api/ipfs/usernameExists
+        await axios.post("http://localhost:3000/api/ipfs/usernameExists", { username: username }).then((response) => {
+            if (response.data.result)
+                throw "Username already used";
+        });
 
         //given the address, call the PuzzleContract function of getUserInfo. 
         var web3 = new Web3('http://127.0.0.1:7545');

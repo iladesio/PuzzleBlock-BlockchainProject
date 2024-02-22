@@ -40,7 +40,7 @@ router.post('/pinJson', (req, res) => {
 router.post('/getPinnedJson', async (req, res) => {
     try {
         hash = req.body.hash
-        const { PINATA_GATEWAY_TOKEN_2} = process.env;
+        const { PINATA_GATEWAY_TOKEN_2 } = process.env;
 
         url = constants.PINATA_GATEWAY_2 + '/ipfs/' + hash
 
@@ -56,7 +56,7 @@ router.post('/getPinnedJson', async (req, res) => {
         }).catch(function (error) {
             console.log(error)
             if (error.response != undefined) throw error.response.data;
-            else if(error.cause != undefined) throw error.cause;
+            else if (error.cause != undefined) throw error.cause;
             else throw "cannot retrieve file from ipfs"
         });
 
@@ -86,37 +86,22 @@ router.post('/unpinJson', async (req, res) => {
     }
 });
 
-router.post('/checkUsername', async (req, res) => {
+router.post('/usernameExists', async (req, res) => {
     try {
         username = req.body.username
         const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
         const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
-        console.log(username)
-        const filters = {
-            status: 'unpinned',
-            metadata:{
-                name: username,
-                keyvalues: null
+
+        var isFound = false;
+
+        for await (const item of pinata.getFilesByCount()) {
+            if (item != null && item.metadata.name === username && item.date_unpinned == null) {
+                isFound = true;
+                break;
             }
-        };
-
-
-        var files=[];
-
-        for await (const item of pinata.getFilesByCount(filters)) {
-            files.push(item)
         }
 
-        // pinata.getFilesByCount(filters).then((result) => {
-        //     //handle results here
-        //     files=result
-        // }).catch((err) => {
-        //     //handle error here
-        //     res.status(500).send("Impossible to retrieve files: " + err)
-        // });
-
-        console.log(files)
-        res.json({ "result": files.length===0 });
+        res.json({ "result": isFound });
     } catch (error) {
         res.status(500).send("Cannot check username: " + error);
     }
