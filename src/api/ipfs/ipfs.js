@@ -106,7 +106,7 @@ router.post('/usernameExists', async (req, res) => {
 
 
         for await (const item of pinata.getFilesByCount(filters)) {
-            if (item != null && item.metadata.name === username) {
+            if (item != null && item.metadata.name === username && item.metadata.date_unpinned === null) {
                 isFound = true;
                 break;
             }
