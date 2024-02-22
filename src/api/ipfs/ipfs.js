@@ -10,8 +10,8 @@ router.post('/pinJson', (req, res) => {
         jsonObject = req.body.jsonObject
         filename = req.body.filename
         //const fs = require('fs')
-        const { PINATA_API_KEY, SECRET_PINATA_API_KEY } = process.env;
-        const pinata = new pinataSDK(PINATA_API_KEY, SECRET_PINATA_API_KEY);
+        const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
+        const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
 
         //const src = "user.json";
         //const file = fs.createReadStream(src)
@@ -40,13 +40,13 @@ router.post('/pinJson', (req, res) => {
 router.post('/getPinnedJson', async (req, res) => {
     try {
         hash = req.body.hash
-        const { PINATA_GATEWAY_TOKEN } = process.env;
+        const { PINATA_GATEWAY_TOKEN_2} = process.env;
 
-        url = constants.PINATA_GATEWAY + '/ipfs/' + hash
+        url = constants.PINATA_GATEWAY_2 + '/ipfs/' + hash
 
         console.log(url)
 
-        header = { 'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN }
+        header = { 'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN_2 }
 
         await axios.get(url, {
             maxBodyLength: "Infinity",
@@ -86,6 +86,42 @@ router.post('/unpinJson', async (req, res) => {
     }
 });
 
+router.post('/checkUsername', async (req, res) => {
+    try {
+        username = req.body.username
+        const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
+        const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
+        console.log(username)
+        const filters = {
+            status: 'unpinned',
+            metadata:{
+                name: username,
+                keyvalues: null
+            }
+        };
+
+
+        var files=[];
+
+        for await (const item of pinata.getFilesByCount(filters)) {
+            files.push(item)
+        }
+
+        // pinata.getFilesByCount(filters).then((result) => {
+        //     //handle results here
+        //     files=result
+        // }).catch((err) => {
+        //     //handle error here
+        //     res.status(500).send("Impossible to retrieve files: " + err)
+        // });
+
+        console.log(files)
+        res.json({ "result": files.length===0 });
+    } catch (error) {
+        res.status(500).send("Cannot check username: " + error);
+    }
+
+});
 
 // Export the router
 module.exports = router;

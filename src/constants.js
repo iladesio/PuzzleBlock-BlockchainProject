@@ -1,5 +1,5 @@
 module.exports = Object.freeze({
-    ADMIN_ACCOUNT: '0x315882EAfFCD39D76b937Fa4Cf11a41067b2e63d',
+    ADMIN_ACCOUNT: '0x08798ADAFd4BD44E746543364641F9545d33adc9',
     CONTRACTS : [
         { name: 'PuzzleContract'}
       ],

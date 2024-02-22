@@ -65,7 +65,17 @@ router.post('/register', async (req, res) => {
 
         if (username === undefined || username === "") {
             throw "Username must be set";
+        }
 
+        try {
+            //invoke post request to localhost:3000/api/ipfs/getPinnedJson
+            axios.post("http://localhost:3000/api/ipfs/checkUsername",{username: username}).then((response) => {
+                let ret = response.data.result;
+                console.log(ret)
+            });
+
+        } catch (error) {
+            throw error.response.data;
         }
 
         //given the address, call the PuzzleContract function of getUserInfo. 
@@ -100,7 +110,7 @@ router.post('/register', async (req, res) => {
                 //invoke post request to localhost:3000/api/ipfs/getPinnedJson
                 axios.post("http://localhost:3000/api/ipfs/pinJson", {
                     jsonObject: userJson,
-                    filename: address
+                    filename: username
                 }).then((response) => {
                     let ret = response.data.result;
                     console.log("User registered in IPFS with CID: " + ret);
