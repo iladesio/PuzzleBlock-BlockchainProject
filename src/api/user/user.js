@@ -67,9 +67,9 @@ router.post('/register', async (req, res) => {
             throw "Username must be set";
         }
 
-        //invoke post request to localhost:3000/api/ipfs/usernameExists
-        await axios.post("http://localhost:3000/api/ipfs/usernameExists", { username: username }).then((response) => {
-            if (response.data.result)
+        //invoke post request to localhost:3000/api/ipfs/getProfiles
+        await axios.post("http://localhost:3000/api/ipfs/getProfiles", { username: username }).then((response) => {
+            if (response.data.count > 0)
                 throw "Username already used";
         });
 

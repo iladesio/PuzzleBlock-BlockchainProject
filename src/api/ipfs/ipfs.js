@@ -86,38 +86,33 @@ router.post('/unpinJson', async (req, res) => {
     }
 });
 
-router.post('/usernameExists', async (req, res) => {
+router.post('/getProfiles', async (req, res) => {
     try {
         username = req.body.username
-        const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
-        const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
+        const { PINATA_TOKEN_2 } = process.env;
 
-        var isFound = false;
+        var url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned'
+        if (username !== undefined && username !== "")
+            url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned&metadata[name]=' + username
 
-        //const metadataFilter = {
-        //    name: username,
-        //    keyvalues: null
+        header = { Authorization: 'Bearer ' + PINATA_TOKEN_2 }
 
-        //};
+        var ret;
+        await axios.get(url, {
+            headers: header
+        }).then((response) => {
+            ret = response.data
+        }).catch(function (err) {
+            throw "pinList error " + err
+        });
 
-        const filters = {
-            unpinEnd: null
-        };
-
-
-        for await (const item of pinata.getFilesByCount(filters)) {
-            if (item != null && item.metadata.name === username && item.metadata.date_unpinned === null) {
-                isFound = true;
-                break;
-            }
-        }
-
-        res.json({ "result": isFound });
+        res.json(ret);
     } catch (error) {
-        res.status(500).send("Cannot check username: " + error);
+        res.status(500).send("Cannot retrieve profiles: " + error);
     }
 
 });
+
 
 // Export the router
 module.exports = router;
