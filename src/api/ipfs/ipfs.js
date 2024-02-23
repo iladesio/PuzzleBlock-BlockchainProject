@@ -9,25 +9,27 @@ router.post('/pinJson', (req, res) => {
     try {
         jsonObject = req.body.jsonObject
         filename = req.body.filename
-        //const fs = require('fs')
+        typeOfFile = req.body.type
         const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
         const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
 
-        //const src = "user.json";
-        //const file = fs.createReadStream(src)
         const options = {
             pinataMetadata: {
-                name: filename
+                name: filename,
+                keyvalues: {
+                    type: typeOfFile
+                }
             }
+
         };
 
         // We pass in the readable stream for the file, ******and****** the options object.
         pinata.pinJSONToIPFS(jsonObject, options).then((result) => {
             //handle results here
-            res.json({ "result": result.IpfsHash });
+            res.json(result.IpfsHash);
         }).catch((err) => {
             //handle error here
-            res.status(500).send("Impossible to load data on IPFS: " + err)
+            res.status(500).send("Impossible to save data on IPFS: " + err)
         });
 
     } catch (error) {
@@ -76,7 +78,7 @@ router.post('/unpinJson', async (req, res) => {
         // We pass in the readable stream for the file, ******and****** the options object.
         pinata.unpin(hash).then((result) => {
             //handle results here
-            res.json({ "result": "OK" });
+            res.json(result);
         }).catch((err) => {
             //handle error here
             res.status(500).send("Impossible to unpin json: " + err)
@@ -86,27 +88,27 @@ router.post('/unpinJson', async (req, res) => {
     }
 });
 
-router.post('/getProfiles', async (req, res) => {
+router.post('/getFiles', async (req, res) => {
     try {
         username = req.body.username
+        type = req.body.type
         const { PINATA_TOKEN_2 } = process.env;
 
-        var url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned'
+
+        var url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned&metadata[keyvalues]={"type":{"value":"' + type + '","op":"eq"}}';
         if (username !== undefined && username !== "")
-            url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned&metadata[name]=' + username
+            url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned&metadata[keyvalues]={"type":{"value":"' + type + '","op":"eq"}}&metadata[name]=' + username
 
         header = { Authorization: 'Bearer ' + PINATA_TOKEN_2 }
 
-        var ret;
         await axios.get(url, {
             headers: header
         }).then((response) => {
-            ret = response.data
+            res.json(response.data);
         }).catch(function (err) {
-            throw "pinList error " + err
+            throw "pinList error :" + err
         });
 
-        res.json(ret);
     } catch (error) {
         res.status(500).send("Cannot retrieve profiles: " + error);
     }

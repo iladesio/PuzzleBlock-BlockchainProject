@@ -67,15 +67,16 @@ router.post('/register', async (req, res) => {
             throw "Username must be set";
         }
 
-        //invoke post request to localhost:3000/api/ipfs/getProfiles
-        await axios.post("http://localhost:3000/api/ipfs/getProfiles", { username: username }).then((response) => {
+        //invoke post request to localhost:3000/api/ipfs/getFiles
+        await axios.post("http://localhost:3000/api/ipfs/getFiles", { username: username, type: 'profile' }).then((response) => {
             if (response.data.count > 0)
                 throw "Username already used";
         });
 
+        console.log('OK USERNAME')
+
         //given the address, call the PuzzleContract function of getUserInfo. 
         var web3 = new Web3('http://127.0.0.1:7545');
-
 
         const ABI = require('../../contracts/PuzzleContract.json');
         //console.log("ABI: " + ABI)
@@ -102,12 +103,13 @@ router.post('/register', async (req, res) => {
                 "PotionNumber": 0
             }
             try {
-                //invoke post request to localhost:3000/api/ipfs/getPinnedJson
+                //invoke post request to localhost:3000/api/ipfs/pinJson
                 axios.post("http://localhost:3000/api/ipfs/pinJson", {
                     jsonObject: userJson,
-                    filename: username
+                    filename: username,
+                    type: 'profile'
                 }).then((response) => {
-                    let ret = response.data.result;
+                    let ret = response.data;
                     console.log("User registered in IPFS with CID: " + ret);
                     res.json(ret);
                 });
@@ -118,6 +120,39 @@ router.post('/register', async (req, res) => {
         }
     } catch (e) {
         res.status(500).send(e);
+    }
+});
+
+router.post('/getAverageScore', async (req, res) => {
+    try {
+
+        var users;
+        //invoke post request to localhost:3000/api/ipfs/getFiles
+        await axios.post("http://localhost:3000/api/ipfs/getFiles", { type: 'profile' }).then((response) => {
+            console.log(response.data)
+            users = response.data.rows;
+        });
+
+        var totalScore = 0;
+
+        for (var i = 0; i < users.length; i++) {
+
+            await axios.post("http://localhost:3000/api/ipfs/getPinnedJson", {
+                hash: users[i].ipfs_pin_hash
+            }).then((response) => {
+                totalScore += response.data.Points
+            }).catch(function (error) {
+                throw "Cannot read from IPFS: " + error.response.data;
+            });
+        }
+
+        var averageScore = totalScore / users.length;
+
+        res.json(averageScore)
+
+
+    } catch (e) {
+        res.status(500).send("Cannot get difficulty" + e);
     }
 });
 
