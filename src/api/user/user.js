@@ -73,7 +73,6 @@ router.post('/register', async (req, res) => {
                 throw "Username already used";
         });
 
-        console.log('OK USERNAME')
 
         //given the address, call the PuzzleContract function of getUserInfo. 
         var web3 = new Web3('http://127.0.0.1:7545');
@@ -129,7 +128,6 @@ router.post('/getAverageScore', async (req, res) => {
         var users;
         //invoke post request to localhost:3000/api/ipfs/getFiles
         await axios.post("http://localhost:3000/api/ipfs/getFiles", { type: 'profile' }).then((response) => {
-            console.log(response.data)
             users = response.data.rows;
         });
 
@@ -150,6 +148,36 @@ router.post('/getAverageScore', async (req, res) => {
 
         res.json(averageScore)
 
+
+    } catch (e) {
+        res.status(500).send("Cannot get difficulty" + e);
+    }
+});
+
+
+router.post('/getUserProfiles', async (req, res) => {
+    try {
+
+        var users;
+        //invoke post request to localhost:3000/api/ipfs/getFiles
+        await axios.post("http://localhost:3000/api/ipfs/getFiles", { type: 'profile' }).then((response) => {
+            users = response.data.rows;
+        });
+
+        var players = [];
+
+        for (var i = 0; i < users.length; i++) {
+
+            await axios.post("http://localhost:3000/api/ipfs/getPinnedJson", {
+                hash: users[i].ipfs_pin_hash
+            }).then((response) => {
+                players.push(response.data)
+            }).catch(function (error) {
+                throw "Cannot read from IPFS: " + error.response.data;
+            });
+        }
+
+        res.json(players)
 
     } catch (e) {
         res.status(500).send("Cannot get difficulty" + e);
