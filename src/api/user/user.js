@@ -2,7 +2,7 @@ const { Console } = require('console');
 const express = require('express');
 const router = express.Router();
 const axios = require('axios')
-const { Web3 } = require('web3'); 
+const { Web3 } = require('web3');
 
 var constants = require('../../constants');
 
@@ -124,7 +124,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/getAverageScore', async (req, res) => {
+router.post('/getDifficulty', async (req, res) => {
     try {
 
         var users;
@@ -148,11 +148,15 @@ router.post('/getAverageScore', async (req, res) => {
 
         var averageScore = totalScore / users.length;
 
-        res.json(averageScore)
-
+        if (averageScore < constants.MIN_SCORE)
+            res.json(0)
+        else if (averageScore >= constants.MIN_SCORE && averageScore < constants.MAX_SCORE)
+            res.json(1)
+        else
+            res.json(2)
 
     } catch (e) {
-        res.status(500).send("Cannot get average score: " + e);
+        res.status(500).send("Cannot get difficulty: " + e);
     }
 });
 
