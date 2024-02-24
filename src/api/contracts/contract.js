@@ -2,6 +2,8 @@ const { Console } = require('console');
 const express = require('express');
 const router = express.Router();
 
+var constants = require('../../constants');
+
 router.post('/getContractInfo', (req, res) => {
     try {
         const { Web3 } = require('web3'); // Importare Web3 correttamente
@@ -15,7 +17,7 @@ router.post('/getContractInfo', (req, res) => {
 
         console.log("Contract Name: " + contractName);
 
-        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        web3 = new Web3(new Web3.providers.HttpProvider(constants.GANACHE_URL));
 
         var ABI = require('../../contracts/' + contractName + '.json');
         const contractAddress = require('../../contracts/contracts.json')[contractName];

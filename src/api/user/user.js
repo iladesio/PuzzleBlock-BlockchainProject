@@ -2,7 +2,9 @@ const { Console } = require('console');
 const express = require('express');
 const router = express.Router();
 const axios = require('axios')
-const { Web3 } = require('web3'); // Importare Web3 correttamente
+const { Web3 } = require('web3'); 
+
+var constants = require('../../constants');
 
 router.post('/userInfo', async (req, res) => {
 
@@ -14,7 +16,7 @@ router.post('/userInfo', async (req, res) => {
         }
 
         //given the address, call the PuzzleContract function of getUserInfo. 
-        var web3 = new Web3('http://127.0.0.1:7545');
+        var web3 = new Web3(constants.GANACHE_URL);
 
         const ABI = require('../../contracts/PuzzleContract.json');
         console.log("ABI: " + ABI)
@@ -75,7 +77,7 @@ router.post('/register', async (req, res) => {
 
 
         //given the address, call the PuzzleContract function of getUserInfo. 
-        var web3 = new Web3('http://127.0.0.1:7545');
+        var web3 = new Web3(constants.GANACHE_URL);
 
         const ABI = require('../../contracts/PuzzleContract.json');
         //console.log("ABI: " + ABI)
@@ -150,7 +152,7 @@ router.post('/getAverageScore', async (req, res) => {
 
 
     } catch (e) {
-        res.status(500).send("Cannot get difficulty" + e);
+        res.status(500).send("Cannot get average score: " + e);
     }
 });
 
@@ -180,7 +182,7 @@ router.post('/getUserProfiles', async (req, res) => {
         res.json(players)
 
     } catch (e) {
-        res.status(500).send("Cannot get difficulty" + e);
+        res.status(500).send("Cannot get user profiles: " + e);
     }
 });
 
