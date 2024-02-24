@@ -184,5 +184,22 @@ router.post('/getUserProfiles', async (req, res) => {
     }
 });
 
+router.post('/deleteUser', async (req, res) => {
+    try {
+        ipfsCid = req.body.ipfsCid;
+        //invoke post request to localhost:3000/api/ipfs/getFiles
+        await axios.post("http://localhost:3000/api/ipfs/unpinJson", { hash: ipfsCid }).then((response) => {
+            console.log("User " + ipfsCid + " correctly unpinned: " + response.data);
+            res.json(response.data)
+        }).catch(error => {
+            throw error.response.data;
+        });
+
+    } catch (e) {
+        res.status(500).send("Cannot remove user: " + e);
+    }
+});
+
+
 // Export the router
 module.exports = router;
