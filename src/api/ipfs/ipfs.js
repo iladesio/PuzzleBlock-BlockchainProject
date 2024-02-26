@@ -38,6 +38,40 @@ router.post('/pinJson', (req, res) => {
 
 });
 
+router.post('/pinByHash', (req, res) => {
+    try {
+        hash = req.body.ipfsCid
+        username = req.body.username
+        typeOfFile = req.body.type
+
+        const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
+        const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
+
+        const options = {
+            pinataMetadata: {
+                name: username,
+                keyvalues: {
+                    type: typeOfFile
+                }
+            }
+
+        };
+
+        pinata.pinByHash(hash, options).then((result) => {
+            //handle results here
+            res.json("Ok");
+        }).catch((err) => {
+            //handle error here
+            res.status(500).send("Impossible to pin hash: " + err.message)
+        });
+
+
+    } catch (error) {
+        res.status(500).send("Cannot pin hash: " + error);
+    }
+
+});
+
 
 router.post('/getPinnedJson', async (req, res) => {
     try {
