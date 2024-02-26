@@ -9,6 +9,17 @@ contract PuzzleBlock {
         string ipfsCid;
     }
 
+    //Not SAFE
+    struct NFT {
+        string assetIPFS;
+        uint8 Id; //"number of series"
+        uint8 maxUnits;
+        uint8 unitsMinted;
+    }
+    NFT[] public nfts;
+
+    mapping(address => string) private NFTs;
+
     // Mapping per associare ogni indirizzo Ethereum a un utente
     mapping(address => User) private users;
 
