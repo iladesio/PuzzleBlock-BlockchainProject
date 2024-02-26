@@ -41,7 +41,7 @@ router.post('/pinJson', (req, res) => {
 router.post('/pinByHash', (req, res) => {
     try {
         hash = req.body.ipfsCid
-        username = req.body.username
+        filename = req.body.filename
         typeOfFile = req.body.type
 
         const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
@@ -49,7 +49,7 @@ router.post('/pinByHash', (req, res) => {
 
         const options = {
             pinataMetadata: {
-                name: username,
+                name: filename,
                 keyvalues: {
                     type: typeOfFile
                 }
@@ -127,11 +127,11 @@ router.post('/getFiles', async (req, res) => {
         username = req.body.username
         type = req.body.type
         const { PINATA_TOKEN_2 } = process.env;
-
-
-        var url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned&metadata[keyvalues]={"type":{"value":"' + type + '","op":"eq"}}';
+        var url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned';
+        if (type !== undefined && type !== "")
+            url += '&metadata[keyvalues]={"type":{"value":"' + type + '","op":"eq"}}';
         if (username !== undefined && username !== "")
-            url = 'https://api.pinata.cloud/data/pinList?includeCount=true&status=pinned&metadata[keyvalues]={"type":{"value":"' + type + '","op":"eq"}}&metadata[name]=' + username
+            url += '&metadata[name]=' + username
 
         header = { Authorization: 'Bearer ' + PINATA_TOKEN_2 }
 

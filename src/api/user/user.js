@@ -265,6 +265,23 @@ router.post('/updateUser', async (req, res) => {
     }
 });
 
+router.post('/pinUserByHash', async (req, res) => {
+    try {
+        ipfsCid = req.body.ipfsCid
+        filename = req.body.filename
+
+        //invoke post request to localhost:3000/api/ipfs/pinByHash
+        await axios.post("http://localhost:3000/api/ipfs/pinByHash", { hash: ipfsCid, filename: filename, type: 'profile' }).then((response) => {
+            console.log("User " + ipfsCid + " correctly pinned: " + response.data);
+            res.json(response.data)
+        }).catch(error => {
+            throw error.response.data;
+        });
+
+    } catch (e) {
+        res.status(500).send("Cannot pin user by hash: " + e);
+    }
+});
 
 // Export the router
 module.exports = router;
