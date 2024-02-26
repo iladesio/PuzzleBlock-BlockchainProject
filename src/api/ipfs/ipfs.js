@@ -40,7 +40,7 @@ router.post('/pinJson', (req, res) => {
 
 router.post('/pinByHash', (req, res) => {
     try {
-        hash = req.body.ipfsCid
+        hash = req.body.hash
         filename = req.body.filename
         typeOfFile = req.body.type
 
