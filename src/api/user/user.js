@@ -268,7 +268,7 @@ router.post('/updateUser', async (req, res) => {
 router.post('/pinUserByHash', async (req, res) => {
     try {
         ipfsCid = req.body.ipfsCid
-        filename = req.body.filename
+        filename = req.body.username
 
         //invoke post request to localhost:3000/api/ipfs/pinByHash
         await axios.post("http://localhost:3000/api/ipfs/pinByHash", { hash: ipfsCid, filename: filename, type: 'profile' }).then((response) => {
