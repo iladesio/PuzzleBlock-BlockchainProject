@@ -206,6 +206,65 @@ router.post('/deleteUser', async (req, res) => {
     }
 });
 
+router.post('/updateUser', async (req, res) => {
+    try {
+
+        var userJson = req.body.userJson;
+        var oldIpfsCid = undefined;
+        try {
+            //given the address, call the PuzzleContract function of getUserInfo. 
+            var web3 = new Web3(constants.GANACHE_URL);
+            const ABI = require('../../contracts/PuzzleContract.json');
+            const contractAddress = require('../../contracts/contracts.json')["PuzzleContract"];
+            var contract = new web3.eth.Contract(ABI, contractAddress);
+            var oldIpfsCid = await contract.methods.getUserInfo(userJson.UserAddress).call();
+        } catch (error) {
+            throw "Cannot retrieve user ipfsCid: " + error;
+        }
+
+        if (oldIpfsCid === undefined || oldIpfsCid === "") {
+            throw "User not found";
+        }
+
+        var newIpfsCid;
+        //invoke post request to localhost:3000/api/ipfs/pinJson
+        axios.post("http://localhost:3000/api/ipfs/pinJson", {
+            jsonObject: userJson,
+            filename: userJson.Username,
+            type: 'profile'
+        }).then(async function (response) {
+            newIpfsCid = response.data;
+            console.log("User updated in IPFS with CID: " + newIpfsCid);
+            if (oldIpfsCid !== newIpfsCid) {
+
+                await axios.post("http://localhost:3000/api/ipfs/unpinJson", { hash: oldIpfsCid }).then((response) => {
+                    console.log("User " + oldIpfsCid + " correctly unpinned: " + response.data);
+                }).catch(async function (error) {
+
+                    console.log("Rolling back user")
+                    await axios.post("http://localhost:3000/api/ipfs/unpinJson", { hash: newIpfsCid }).then((response) => {
+                        console.log("User " + newIpfsCid + " correctly unpinned: " + response.data);
+                    }).catch(err => {
+                        throw "Cannot rollback: " + err.response.data;
+
+                    });
+
+                    throw error.response.data + ": user rolled back";
+                });
+            }
+
+            res.json({ Item1: newIpfsCid, Item2: oldIpfsCid, Item3: userJson.Username });
+
+        }).catch(error => {
+            throw error.response.data;
+        });
+
+
+    } catch (e) {
+        res.status(500).send("Cannot update user: " + e);
+    }
+});
+
 
 // Export the router
 module.exports = router;
