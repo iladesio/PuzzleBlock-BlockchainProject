@@ -2,7 +2,9 @@ const { Console } = require('console');
 const express = require('express');
 const router = express.Router();
 const axios = require('axios')
-const { Web3 } = require('web3'); // Importare Web3 correttamente
+const { Web3 } = require('web3');
+
+var constants = require('../../constants');
 
 router.post('/userInfo', async (req, res) => {
 
@@ -14,7 +16,7 @@ router.post('/userInfo', async (req, res) => {
         }
 
         //given the address, call the PuzzleContract function of getUserInfo. 
-        var web3 = new Web3('http://127.0.0.1:7545');
+        var web3 = new Web3(constants.GANACHE_URL);
 
         const ABI = require('../../contracts/PuzzleContract.json');
         console.log("ABI: " + ABI)
@@ -75,7 +77,7 @@ router.post('/register', async (req, res) => {
 
 
         //given the address, call the PuzzleContract function of getUserInfo. 
-        var web3 = new Web3('http://127.0.0.1:7545');
+        var web3 = new Web3(constants.GANACHE_URL);
 
         const ABI = require('../../contracts/PuzzleContract.json');
         //console.log("ABI: " + ABI)
@@ -122,7 +124,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/getAverageScore', async (req, res) => {
+router.post('/getDifficulty', async (req, res) => {
     try {
 
         var users;
@@ -146,11 +148,15 @@ router.post('/getAverageScore', async (req, res) => {
 
         var averageScore = totalScore / users.length;
 
-        res.json(averageScore)
-
+        if (averageScore < constants.MIN_SCORE)
+            res.json(0)
+        else if (averageScore >= constants.MIN_SCORE && averageScore < constants.MAX_SCORE)
+            res.json(1)
+        else
+            res.json(2)
 
     } catch (e) {
-        res.status(500).send("Cannot get difficulty" + e);
+        res.status(500).send("Cannot get difficulty: " + e);
     }
 });
 
@@ -180,9 +186,26 @@ router.post('/getUserProfiles', async (req, res) => {
         res.json(players)
 
     } catch (e) {
-        res.status(500).send("Cannot get difficulty" + e);
+        res.status(500).send("Cannot get user profiles: " + e);
     }
 });
+
+router.post('/deleteUser', async (req, res) => {
+    try {
+        ipfsCid = req.body.ipfsCid;
+        //invoke post request to localhost:3000/api/ipfs/getFiles
+        await axios.post("http://localhost:3000/api/ipfs/unpinJson", { hash: ipfsCid }).then((response) => {
+            console.log("User " + ipfsCid + " correctly unpinned: " + response.data);
+            res.json(response.data)
+        }).catch(error => {
+            throw error.response.data;
+        });
+
+    } catch (e) {
+        res.status(500).send("Cannot remove user: " + e);
+    }
+});
+
 
 // Export the router
 module.exports = router;

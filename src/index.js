@@ -7,7 +7,7 @@ const pinataSDK = require('@pinata/sdk');
 var constants = require('./constants');
 
 // Connessione al provider locale di Ethereum
-web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+web3 = new Web3(new Web3.providers.HttpProvider(constants.GANACHE_URL));
 
 async function deployContracts() {
     let contractsInfo = {};

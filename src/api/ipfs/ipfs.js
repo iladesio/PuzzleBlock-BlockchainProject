@@ -29,7 +29,7 @@ router.post('/pinJson', (req, res) => {
             res.json(result.IpfsHash);
         }).catch((err) => {
             //handle error here
-            res.status(500).send("Impossible to save data on IPFS: " + err)
+            res.status(500).send("Impossible to save data on IPFS: " + err.message)
         });
 
     } catch (error) {
@@ -72,8 +72,8 @@ router.post('/getPinnedJson', async (req, res) => {
 router.post('/unpinJson', async (req, res) => {
     try {
         hash = req.body.hash
-        const { PINATA_API_KEY, SECRET_PINATA_API_KEY } = process.env;
-        const pinata = new pinataSDK(PINATA_API_KEY, SECRET_PINATA_API_KEY);
+        const { PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2 } = process.env;
+        const pinata = new pinataSDK(PINATA_API_KEY_2, SECRET_PINATA_API_KEY_2);
 
         // We pass in the readable stream for the file, ******and****** the options object.
         pinata.unpin(hash).then((result) => {
@@ -81,7 +81,7 @@ router.post('/unpinJson', async (req, res) => {
             res.json(result);
         }).catch((err) => {
             //handle error here
-            res.status(500).send("Impossible to unpin json: " + err)
+            res.status(500).send("Impossible to unpin json: " + err.message)
         });
     } catch (error) {
         res.status(500).send("Cannot unpin file: " + error);
