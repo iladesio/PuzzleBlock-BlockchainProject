@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0 <0.9.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -11,7 +11,7 @@ contract GameAsset is ERC1155{
 
     uint256[] listIds = [SKELECAT,COSMOSQUIT,TECHNOTOK];
 
-    constructor() ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmUftc8LtmFfdcQrm3iNtVwHahay18V8CntcpmHeeskPJ9/?pinataGatewayToken=UFLPlgEKciyWU0K8szufd_ShjfnlY4vj5B06b7hYldAtABp9lPc1553JjfRHwtzf/{id}.json"){
+    constructor() ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmUftc8LtmFfdcQrm3iNtVwHahay18V8CntcpmHeeskPJ9/{id}.json"){
     }
 
     function createToken (address account,uint256[] memory ids,uint256[] memory amounts,bytes memory data) public {
@@ -26,7 +26,7 @@ contract GameAsset is ERC1155{
     function uri(uint256 _tokenId) override public pure returns (string memory){
         return string(
             abi.encodePacked(
-                "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmUftc8LtmFfdcQrm3iNtVwHahay18V8CntcpmHeeskPJ9/?pinataGatewayToken=UFLPlgEKciyWU0K8szufd_ShjfnlY4vj5B06b7hYldAtABp9lPc1553JjfRHwtzf/",
+                "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmUftc8LtmFfdcQrm3iNtVwHahay18V8CntcpmHeeskPJ9/",
                 Strings.toString(_tokenId),
                 ".json"
             )
