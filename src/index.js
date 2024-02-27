@@ -73,11 +73,14 @@ async function startEndPoint() {
     const contract = require('./api/contracts/contract');
     const ipfs = require('./api/ipfs/ipfs');
     const user = require('./api/user/user')
+    const nft = require('./api/nft/nft')
 
     // Mount the helloworld route
     app.use('/api/contracts', contract);
     app.use('/api/ipfs', ipfs);
     app.use('/api/user', user);
+    app.use('/api/nft', nft);
+
 
     app.listen(constants.PORT, () => console.log(`web server listening on port ${constants.PORT}!`))
         
