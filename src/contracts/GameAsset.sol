@@ -6,16 +6,12 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract GameAsset is ERC1155, Ownable{
-    uint256 public constant SKELECAT = 1;
-    uint256 public constant COSMOSQUIT = 2;
-    uint256 public constant TECHNOTOK = 3;
-
-    uint256[] listIds = [SKELECAT,COSMOSQUIT,TECHNOTOK];
-    uint256[] amounts = [10,10,10];
+    uint256[] public listIds = [1, 2, 3, 4, 5, 6, 7]; //indexes of collections 
+    uint256[] amounts = [20, 20, 20, 20, 20, 20, 20];
     //uint256[] values = [100,150,200];
-
+    
     constructor() 
-        ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmUftc8LtmFfdcQrm3iNtVwHahay18V8CntcpmHeeskPJ9/{id}.json")
+        ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmZofjbHRrXVisiCPqM3R6p7fnwT7nTXcDKMLAxUC8eWq4/{id}.json")
         Ownable(msg.sender)
     {}
 
@@ -27,15 +23,14 @@ contract GameAsset is ERC1155, Ownable{
         _mint(msg.sender, id, amount, data);
     }
 
-     
-    function getIds() public view returns(uint256[] memory){
+    function getIds() internal view returns(uint256[] memory){
         return listIds;
     }
 
     function uri(uint256 _tokenId) override public pure returns (string memory){
         return string(
             abi.encodePacked(
-                "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmUftc8LtmFfdcQrm3iNtVwHahay18V8CntcpmHeeskPJ9/",
+                "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmZofjbHRrXVisiCPqM3R6p7fnwT7nTXcDKMLAxUC8eWq4/",
                 Strings.toString(_tokenId),
                 ".json"
             )

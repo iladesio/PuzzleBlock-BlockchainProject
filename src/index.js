@@ -42,6 +42,9 @@ async function deployContracts() {
     
 }
 
+async function initializeNFT(){
+    
+}
 
 async function startEndPoint() {
     const express = require('express');
