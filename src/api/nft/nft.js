@@ -4,10 +4,29 @@ const router = express.Router();
 const { Web3 } = require('web3'); // Importare Web3 correttamente
 var constants = require('../../constants');
 
-router.post('/mintNFT', (req, res) => {
+router.post('/getMintedAsset', async (req, res) => {
     try {
-        //creare n token per ciascuna categoria definita in constants chiamando la funzione  function createToken (address account,uint256[] memory ids,uint256[] memory amounts,bytes memory data) public 
-        print("Hello World")
+        
+        tokenId = req.body.tokenId;
+        //given the address, call the PuzzleContract function of getUserInfo. 
+        var web3 = new Web3(constants.GANACHE_URL);
+
+        const ABI = require('../../contracts/GameAsset.json');
+        //console.log("ABI: " + ABI)
+        const contractAddress = require('../../contracts/contracts.json')["GameAsset"];
+        //console.log("contractAddress: " + contractAddress)
+
+        var contract = new web3.eth.Contract(ABI, contractAddress);
+        // Get the current value of my number
+        var result = await contract.methods.getAsset(tokenId).call();
+
+        asset = {
+            "uri": result[0],
+            "amount": Number(result[1]),
+            "price": Number(result[2])
+        };
+
+        res.json(asset);
 
 
     } catch (e) {

@@ -9,6 +9,43 @@ module.exports = Object.freeze({
     PORT: 3000,
     PINATA_GATEWAY: 'https://coral-tremendous-wasp-739.mypinata.cloud',
     PINATA_GATEWAY_2: 'https://bronze-personal-meadowlark-873.mypinata.cloud',
-    MIN_SCORE: 50, MAX_SCORE:200
+    MIN_SCORE: 50, MAX_SCORE:200,
+    ASSETS:[
+      {
+        "id": "1",
+        "amount": 100,
+        "price": 100
+      },
+      {
+        "id": "2",
+        "amount": 10,
+        "price": 1000
+      },
+      {
+        "id": "3",
+        "amount": 10,
+        "price": 1000
+      },
+      {
+        "id": "4",
+        "amount": 10,
+        "price": 1000
+      },
+      {
+        "id": "5",
+        "amount": 10,
+        "price": 1000
+      },
+      {
+        "id": "6",
+        "amount": 10,
+        "price": 1000
+      },
+      {
+        "id": "7",
+        "amount": 10,
+        "price": 1000
+      }
+    ]
 });
 

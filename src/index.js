@@ -22,11 +22,31 @@ async function deployContracts() {
         
         console.log("Deploying Contract:", contractData['name']);
         let contractInstance = new web3.eth.Contract(ABI);
-        
+
+        if(contractData['name'] == 'GameAsset'){
+            var ids = [];
+            var amounts = [];
+            var prices = [];
+
+            for(let i = 0; i < constants.ASSETS.length; i++) {
+                ids.push(constants.ASSETS[i]['id']);
+                amounts.push(constants.ASSETS[i]['amount']);
+                prices.push(constants.ASSETS[i]['price']);
+            }
+        }
+        var newContract;
         try {
-            let newContract = await contractInstance
+            if(contractData['name'] == 'GameAsset'){
+                newContract = await contractInstance
+                    .deploy({ data: bytecode,
+                            arguments: [ids, amounts, prices] 
+                    })
+                    .send({ from: constants.ADMIN_ACCOUNT, gas: 4700000 });
+            } else {
+                newContract = await contractInstance
                 .deploy({ data: bytecode })
                 .send({ from: constants.ADMIN_ACCOUNT, gas: 4700000 });
+            }
             
             console.log("Contract Address:", newContract.options.address);
 
@@ -42,9 +62,6 @@ async function deployContracts() {
     
 }
 
-async function initializeNFT(){
-    
-}
 
 async function startEndPoint() {
     const express = require('express');
