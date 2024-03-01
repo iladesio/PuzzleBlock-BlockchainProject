@@ -248,7 +248,6 @@ router.post('/updateUser', async (req, res) => {
                         throw "Cannot rollback: " + err.response.data;
 
                     });
-                    console.log(error)
                     throw error.response.data + ": user rolled back";
                 });
             }
