@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from abc import abstractmethod, ABC
 from typing import List
 import json
+import datetime 
+from datetime import timezone 
 
 public_key = "0xDeDeA4dB00a4062A0168494687B86683fbb2E00a"   # testnet account
 private_key = "ae26f3e5e9285e0cdf8a91a228fccdb05a3265b943c04ff1a2eff90908051f11"  # testnet account
@@ -44,8 +46,17 @@ class UserRegistered(Event):
     '''
     userAddress: str
     ipfsCid: str
+    timestamp: float
     
     def handle(self, contract, provider):
+  
+        # Getting the current date 
+        # and time 
+        dt = datetime.datetime.now(timezone.utc)   
+        utc_time = dt.replace(tzinfo=timezone.utc) 
+        utc_timestamp = utc_time.timestamp() 
+  
+        print(utc_timestamp) 
         """
                 # call the contract function to notify the blockchain.
                 call_func = contract.functions.promptMinted(**{
@@ -66,7 +77,6 @@ class UserRegistered(Event):
                 # wait for transaction receipt
                 tx_receipt = provider.eth.wait_for_transaction_receipt(send_tx)
           """
-        print("AO")
                 
                 
 
