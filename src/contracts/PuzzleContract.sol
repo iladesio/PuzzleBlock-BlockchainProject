@@ -7,8 +7,6 @@ contract PuzzleBlock {
     struct User {
         address userAddress;
         string ipfsCid;
-        uint256 startTimestamp;
-        uint256 endTimestamp;
     }
 
     //Not SAFE
@@ -28,7 +26,6 @@ contract PuzzleBlock {
     // Evento che verrà emesso quando un nuovo utente viene registrato
     event UserRegistered(address userAddress,string ipfsCid);
     event UserUpdated(address userAddress,string ipfsCid);
-    event ValidateTimestamp(address userAddress,string ipfsCid, uint256 timestamp);
 
     // Funzione per registrare un nuovo utente
     function registerUser(address _userAddress, string memory _ipfsCid) external {
@@ -38,9 +35,7 @@ contract PuzzleBlock {
         // Crea un nuovo utente e lo aggiunge al mapping
         users[_userAddress] = User({
             userAddress: _userAddress,
-            ipfsCid: _ipfsCid,
-            startTimestamp: 0,
-            endTimestamp: 1
+            ipfsCid: _ipfsCid
         });
 
         // Emetti l'evento di registrazione
@@ -55,20 +50,10 @@ contract PuzzleBlock {
     }
 
     // Funzione per registrare un nuovo utente
-    function editUser(address _userAddress, string memory _ipfsCid, uint256 _startTimestamp, uint256 _endTimestamp, uint256 _levelDuration) external {
+    function editUser(address _userAddress, string memory _ipfsCid) external {
         // Verifica che l'indirizzo sia già registrato
         require(users[_userAddress].userAddress != address(0), "User not found");
 
-        require((_startTimestamp > 0 && _endTimestamp == 0) || (_startTimestamp == 0 && _endTimestamp == 0) || (_startTimestamp == 0 && _endTimestamp > 0), "Invalid timestamp");
-        if(_startTimestamp > 0){
-          users[_userAddress].startTimestamp = _startTimestamp;
-          users[_userAddress].endTimestamp = _endTimestamp;
-        }
-        if(_endTimestamp > 0){
-          require(_endTimestamp - users[_userAddress].startTimestamp <= _levelDuration, "Timestamp exceeded level duration!");
-          users[_userAddress].startTimestamp = _startTimestamp;
-          users[_userAddress].endTimestamp = _endTimestamp;
-        }
         
         // Sostituisce ipfs cid
         users[_userAddress].ipfsCid = _ipfsCid;
@@ -76,15 +61,6 @@ contract PuzzleBlock {
         // Emetti l'evento di registrazione
         emit UserUpdated(_userAddress, _ipfsCid);
     }
-
-    function validateTimestamp(address _userAddress, string memory _ipfsCid, uint256 _timestamp) external {
-        // Emetti l'evento di validazione
-        emit ValidateTimestamp(_userAddress, _ipfsCid, _timestamp);
-    }
-
-
-
-
 
     /*function usePowerups(address _userAddress, uint8 typePowerup) external {
         // Verifica che l'utente sia registrato
