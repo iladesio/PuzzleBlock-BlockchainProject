@@ -16,7 +16,7 @@ contract GameAsset is ERC1155, Ownable{
 
     //ipfs gateway + folder where nft are saved. Used to return the uri of the asset saved on the ipfs
     string public IPFS_GATEWAY = "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmZofjbHRrXVisiCPqM3R6p7fnwT7nTXcDKMLAxUC8eWq4/";
-    
+
     //useless now beacuse every available asset is mapped on assets mapping
     //uint256[] public listIds = [SKELECAT, COSMOSQUIT, TECHNOTOK, ARTHURKING, SPARTANWHISKERS, PUMPKINPURR, VAMPURRFANG]; //indexes of collections 
     
@@ -75,15 +75,29 @@ contract GameAsset is ERC1155, Ownable{
     
 
     function safeTransferFrom(uint256 tokenId, uint256 amount, address to) public payable {
-        _safeTransferFrom(msg.sender, to, tokenId, amount, "0x00");
+        require(assets[tokenId].flag == 1, "Not existing token");
+        require(assets[tokenId].amount >= amount, "Not enough available amount of token");
+        require(assets[tokenId].price * amount  <= msg.value, "unsufficient transferred value");
+
+        _safeTransferFrom(owner(), to, tokenId, amount, "0x00");
+
+        assets[tokenId].amount -= amount; 
     }
 
-    function safeBatchTransferFrom(address to, uint256[] memory ids, uint256[] memory values, bytes memory data) public {
-        _safeBatchTransferFrom(msg.sender, to, ids, values, data);
+    function safeBatchTransferFrom(address to, uint256[] memory ids, uint256[] memory amounts) public payable {
+        require(ids.length == amounts.length, "Given arrays of ids and amounts of different lengths");
+
+        uint256 total_cost = 0;
+        for(uint i = 0; i < ids.length; i++) {
+            require(assets[ids[i]].flag == 1, "Not existing asset"); // check su tutti gli id 
+            require(assets[ids[i]].amount >= amounts[i], "Not enough available amount of token");
+            total_cost += assets[ids[i]].price * amounts[i];
+        }
+
+        require(total_cost  <= msg.value, "unsufficient transferred value");
+        _safeBatchTransferFrom(owner(), to, ids, amounts, "0x00");
     }
     
-    //function setPrice(uint256 tokenId,uint256 newPrice)public onlyOwner{
-    //    require(tokenId <= listIds.length, "ID non valido"); // Controlla se l'ID è valido  
-    //}
+    
 }
 
