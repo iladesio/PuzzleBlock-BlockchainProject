@@ -109,7 +109,8 @@ if (result != 0) {
         "RunCompleted": 0,
         "AmethystNumber": 0,
         "GrimoireNumber": 0,
-        "PotionNumber": 0
+        "PotionNumber": 0,
+        "PropicUrl": ""
     }
     try {
         //invoke post request to localhost:3000/api/ipfs/pinJson
