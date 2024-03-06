@@ -95,9 +95,13 @@ contract GameAsset is ERC1155, Ownable{
         }
 
         require(total_cost  <= msg.value, "unsufficient transferred value");
+        
+        for(uint i = 0; i < ids.length; i++) {
+            assets[ids[i]].amount -= amounts[i];
+        }
+
         _safeBatchTransferFrom(owner(), to, ids, amounts, "0x00");
     }
     
     
 }
-

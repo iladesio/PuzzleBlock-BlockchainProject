@@ -116,7 +116,8 @@ router.post('/getPinnedImage', async (req, res) => {
 
         await axios.get(url, {
             maxBodyLength: "Infinity",
-            headers: header
+            headers: header,
+            responseType: 'arraybuffer'
         }).then((response) => {
             
             var img = Buffer.from(response.data, 'base64');
@@ -126,7 +127,11 @@ router.post('/getPinnedImage', async (req, res) => {
                 'Content-Length': img.length
             });
             res.end(img); 
-            //res.send(new Buffer.from(response.data, 'binary').toString('base64'));
+
+            const imgBase64 = Buffer.from(response.data, 'binary').toString('base64');
+            // Send the base64 encoded string as a response
+            console.log(imgBase64);
+            res.send(new Buffer.from(response.data, 'binary').toString('base64'));
         }).catch(function (error) {
             console.log(error)
             if (error.response != undefined) throw error.response.data;

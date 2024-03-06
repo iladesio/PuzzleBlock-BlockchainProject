@@ -22,7 +22,8 @@ async function deployContracts() {
         
         console.log("Deploying Contract:", contractData['name']);
         let contractInstance = new web3.eth.Contract(ABI);
-
+        
+        //initialize collections of NFTs
         if(contractData['name'] == 'GameAsset'){
             var ids = [];
             var amounts = [];
