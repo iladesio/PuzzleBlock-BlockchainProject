@@ -103,6 +103,44 @@ router.post('/getPinnedJson', async (req, res) => {
 });
 
 
+router.post('/getPinnedImage', async (req, res) => {
+    try {
+        hash = req.body.hash
+        const { PINATA_GATEWAY_TOKEN_2 } = process.env;
+
+        url = constants.PINATA_GATEWAY_2 + '/ipfs/' + hash
+
+        console.log(url)
+
+        header = { 'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN_2 }
+
+        await axios.get(url, {
+            maxBodyLength: "Infinity",
+            headers: header
+        }).then((response) => {
+            
+            var img = Buffer.from(response.data, 'base64');
+
+            res.writeHead(200, {
+                'Content-Type': 'image/png',
+                'Content-Length': img.length
+            });
+            res.end(img); 
+            //res.send(new Buffer.from(response.data, 'binary').toString('base64'));
+        }).catch(function (error) {
+            console.log(error)
+            if (error.response != undefined) throw error.response.data;
+            else if (error.cause != undefined) throw error.cause;
+            else throw "cannot retrieve file from ipfs"
+        });
+
+    } catch (error) {
+        res.status(500).send("Cannot retrieve file: " + error);
+    }
+
+});
+
+
 router.post('/unpinJson', async (req, res) => {
     try {
         hash = req.body.hash
