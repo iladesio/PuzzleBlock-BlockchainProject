@@ -27,6 +27,7 @@ router.post('/getMintedAsset', async (req, res) => {
         var result = await contract.methods.getAsset(tokenId).call();
 
         asset = {
+            "id": tokenId,
             "uri": result[0],
             "amount": Number(result[1]),
             "price": Number(result[2])
@@ -39,7 +40,7 @@ router.post('/getMintedAsset', async (req, res) => {
         }).then((response) => {
             asset.name = response.data.name;
             asset.description = response.data.description;
-            asset.rarity = response.data.properties.rarity;
+            asset.rarity = 0;//TODO CHANGE TO INT ON IPFS response.data.properties.rarity;
             asset.fanciness = response.data.properties.fanciness;
             asset.imageURI = response.data.image;
             
