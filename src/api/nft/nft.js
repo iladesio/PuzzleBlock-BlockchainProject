@@ -41,6 +41,7 @@ router.post('/getMintedAsset', async (req, res) => {
             asset.name = response.data.name;
             asset.description = response.data.description;
             asset.rarity = 0;//TODO CHANGE TO INT ON IPFS response.data.properties.rarity;
+            asset.releaseDate = (new Date()).toDateString();
             asset.fanciness = response.data.properties.fanciness;
             asset.imageURI = response.data.image;
             
