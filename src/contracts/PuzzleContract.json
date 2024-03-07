@@ -1,41 +1,5 @@
 [
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "_ipfsCid",
-				"type": "string"
-			}
-		],
-		"name": "editUser",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "_ipfsCid",
-				"type": "string"
-			}
-		],
-		"name": "registerUser",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -79,6 +43,24 @@
 				"internalType": "address",
 				"name": "_userAddress",
 				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_ipfsCid",
+				"type": "string"
+			}
+		],
+		"name": "editUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
 			}
 		],
 		"name": "getUserInfo",
@@ -95,35 +77,19 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "nfts",
-		"outputs": [
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
+			},
 			{
 				"internalType": "string",
-				"name": "assetIPFS",
+				"name": "_ipfsCid",
 				"type": "string"
-			},
-			{
-				"internalType": "uint8",
-				"name": "Id",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "maxUnits",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "unitsMinted",
-				"type": "uint8"
 			}
 		],
-		"stateMutability": "view",
+		"name": "registerUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

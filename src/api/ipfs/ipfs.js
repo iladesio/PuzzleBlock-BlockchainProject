@@ -4,6 +4,7 @@ const router = express.Router();
 const pinataSDK = require('@pinata/sdk');
 const axios = require('axios')
 var constants = require('../../constants');
+var fs = require('fs')
 
 router.post('/pinJson', (req, res) => {
     try {
@@ -114,24 +115,40 @@ router.post('/getPinnedImage', async (req, res) => {
 
         header = { 'x-pinata-gateway-token': PINATA_GATEWAY_TOKEN_2 }
 
+        function saveImage(filename, data){
+            var myBuffer = new Buffer(data.length);
+            for (var i = 0; i < data.length; i++) {
+                myBuffer[i] = data[i];
+            }
+            fs.writeFile("./"+filename, myBuffer, function(err) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log("The file was saved!");
+                }
+            });
+          }
+
         await axios.get(url, {
             maxBodyLength: "Infinity",
             headers: header,
             responseType: 'arraybuffer'
         }).then((response) => {
             
-            var img = Buffer.from(response.data, 'base64');
+            //let buffer = Buffer.from(response.data);
+            
+            // Encode the Buffer as Base64
+            b64Image = response.data.toString('base64');
 
-            res.writeHead(200, {
-                'Content-Type': 'image/png',
-                'Content-Length': img.length
-            });
-            res.end(img); 
-
-            const imgBase64 = Buffer.from(response.data, 'binary').toString('base64');
-            // Send the base64 encoded string as a response
-            console.log(imgBase64);
-            res.send(new Buffer.from(response.data, 'binary').toString('base64'));
+            //saveImage("image.png", response.data);
+            //res.writeHead(200, {
+              //  'Content-Type': 'image/png',
+                //'Content-Length': img.length
+            //});
+            
+            res.json({"result": b64Image})
+            //console.log(new Buffer.from(response.data, 'binary').toString('base64'));
+            //res.end(img); 
         }).catch(function (error) {
             console.log(error)
             if (error.response != undefined) throw error.response.data;
@@ -144,6 +161,9 @@ router.post('/getPinnedImage', async (req, res) => {
     }
 
 });
+
+
+
 
 
 router.post('/unpinJson', async (req, res) => {
