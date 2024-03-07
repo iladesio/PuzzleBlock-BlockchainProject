@@ -6,24 +6,15 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract GameAsset is ERC1155, Ownable{
-    /*uint256 public constant SKELECAT = 1;
-    uint256 public constant COSMOSQUIT = 2;
-    uint256 public constant TECHNOTOK = 3;
-    uint256 public constant ARTHURKING = 4;
-    uint256 public constant SPARTANWHISKERS = 5;
-    uint256 public constant PUMPKINPURR = 6;
-    uint256 public constant VAMPURRFANG = 7;*/
 
-    //ipfs gateway + folder where nft are saved. Used to return the uri of the asset saved on the ipfs
+    // Ipfs gateway + folder where NFTs json are saved. Used to return the uri of the asset saved on the ipfs
     string public IPFS_GATEWAY = "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmZofjbHRrXVisiCPqM3R6p7fnwT7nTXcDKMLAxUC8eWq4/";
-
-    //useless now beacuse every available asset is mapped on assets mapping
-    //uint256[] public listIds = [SKELECAT, COSMOSQUIT, TECHNOTOK, ARTHURKING, SPARTANWHISKERS, PUMPKINPURR, VAMPURRFANG]; //indexes of collections 
     
-    //this mapping is used to store the information about the available assets. If an asset is not available, it could be saved with amount 0 in deploy phase.
-    //the flag parameter is used to distinguish between existing nfts [id 1-7] and all the other possible value that could be given as input. 
+    // This mapping is used to store the information about the available assets. If an asset is not available, it could be saved with amount 0 in deploy phase.
+    // The flag parameter is used to distinguish between existing NFTs [id 1-7] and all the other possible value that could be given as input. 
     mapping(uint256 => Asset) public assets;
 
+    // Struct defining a collection with its ID, price, available amount, and a flag to indicate its existence.
     struct Asset{
         uint256 id;
         uint256 price;
@@ -31,6 +22,12 @@ contract GameAsset is ERC1155, Ownable{
         uint8 flag;
     }
 
+    /* Constructor to initialize the contract with predefined assets.
+        @param ids: Array of asset IDs.
+        @param amounts: Array of amounts for each asset.
+        @param prices: Array of prices for each asset.
+        Requires that ids, amounts, and prices arrays are of the same length. 
+    */
     constructor(uint256[] memory ids, uint256[] memory amounts, uint256[] memory prices) 
         ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmZofjbHRrXVisiCPqM3R6p7fnwT7nTXcDKMLAxUC8eWq4/{id}.json")
         Ownable(msg.sender)
@@ -43,6 +40,12 @@ contract GameAsset is ERC1155, Ownable{
         }
     }
 
+    /* Function overrided to mint a batch of assets.
+        @param ids: Array of asset IDs to mint.
+        @param amounts: Array of amounts for each asset.
+        @param data: Additional data with no specified format, sent in call to '_mintBatch'.
+        Requires that each asset ID exists in the `assets` mapping.
+    */
     function mintBatch(uint256[] memory ids, uint256[] memory amounts,bytes memory data) public onlyOwner {
         for(uint i = 0; i < ids.length; i++) {
             require(assets[ids[i]].flag == 1, "Not existing asset"); // check su tutti gli id 
@@ -50,16 +53,23 @@ contract GameAsset is ERC1155, Ownable{
         _mintBatch(msg.sender, ids, amounts, data);
     }
 
+    /* Function overrided to mint a single asset.
+        @param tokenId: ID of the asset to mint.
+        @param amount: Amount of the asset to mint.
+        @param data: Additional data with no specified format, sent in call to '_mint'.
+        Requires that each asset ID exists in the 'assets' mapping.
+    */
     function mint(uint256 tokenId, uint256 amount, bytes memory data) public onlyOwner {
         require(assets[tokenId].flag == 1, "Not existing asset"); // Controlla se l'ID è valido
     
         _mint(msg.sender, tokenId, amount, data);
     }
 
-    /*function getIds() internal view returns(uint256[] memory){
-        return listIds;
-    }*/
-
+    /* Function to get the URI, amount, and price of an asset by its token ID.
+        @param _tokenId ID of the asset to query.
+        @return URI of the asset, amount available, and its price.
+        Requires that the asset exists.
+    */
     function getAsset(uint256 _tokenId) public view returns (string memory, uint256, uint256){
         require(assets[_tokenId].flag == 1, "this token doesn't exist");
         string memory uri = string(
@@ -72,8 +82,12 @@ contract GameAsset is ERC1155, Ownable{
         return (uri, assets[_tokenId].amount, assets[_tokenId].price);
     }
 
-    
-
+    /* Function overrided to safely transfer a specific amount of an asset to a given address.
+        @param tokenId: ID of the asset to transfer.
+        @param amount: Amount of the asset to transfer.
+        @param to: Address to transfer the asset to.
+        Requires that the asset exists, the amount is available, and the transferred value is sufficient.
+    */
     function safeTransferFrom(uint256 tokenId, uint256 amount, address to) public payable {
         require(assets[tokenId].flag == 1, "Not existing token");
         require(assets[tokenId].amount >= amount, "Not enough available amount of token");
@@ -84,6 +98,12 @@ contract GameAsset is ERC1155, Ownable{
         assets[tokenId].amount -= amount; 
     }
 
+    /* Function overrided to safely transfer specific amounts of multiple assets to a given address.
+        @param to Address to transfer the assets to.
+        @param ids Array of asset IDs to transfer.
+        @param amounts Array of amounts for each asset.
+        Requires that each asset ID exists, the amount for each is available, and the total transferred value is sufficient.
+    */
     function safeBatchTransferFrom(address to, uint256[] memory ids, uint256[] memory amounts) public payable {
         require(ids.length == amounts.length, "Given arrays of ids and amounts of different lengths");
 
