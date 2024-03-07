@@ -1,14 +1,15 @@
 require('dotenv').config();
-const fs = require('fs'); // Rimuovere 'node:' per evitare problemi di compatibilità
-const {Web3} = require('web3'); // Importare Web3 correttamente
+const fs = require('fs'); 
+const {Web3} = require('web3'); 
 const path = require('path');
 const pinataSDK = require('@pinata/sdk');
 
 var constants = require('./constants');
 
-// Connessione al provider locale di Ethereum
+// Connection to the local provider of Ethereum 
 web3 = new Web3(new Web3.providers.HttpProvider(constants.GANACHE_URL));
 
+// async function used to Deploy multiple contracts in constants.js
 async function deployContracts() {
     let contractsInfo = {};
     
@@ -16,7 +17,8 @@ async function deployContracts() {
 
     for (let contractData of constants.CONTRACTS) {
         const filePath = path.resolve(__dirname, './contracts/' + contractData['name'] + '.txt');
-        // Carica l'ABI e il bytecode del contratto
+
+        // Load the ABI and the bytecode of the contract
         const ABI = require('./contracts/' + contractData['name'] + '.json');
         const bytecode = fs.readFileSync(filePath, 'utf8');
         
@@ -63,7 +65,6 @@ async function deployContracts() {
     
 }
 
-
 async function startEndPoint() {
     const express = require('express');
     const bodyParser = require('body-parser');
@@ -96,7 +97,6 @@ async function startEndPoint() {
     const user = require('./api/user/user')
     const nft = require('./api/nft/nft')
 
-    // Mount the helloworld route
     app.use('/api/contracts', contract);
     app.use('/api/ipfs', ipfs);
     app.use('/api/user', user);
@@ -107,16 +107,6 @@ async function startEndPoint() {
         
 }
 
-
-
-
-
 deployContracts();
 startEndPoint();
-
-//pinUser({"nickname": "pippo"});
-
-//getPinnedJson('QmU1QE5UZgbdfGj2Nu2Lz7yDeUTQonZCxA8G56qNmNi67e')
-
-//unpinJson('QmU1QE5UZgbdfGj2Nu2Lz7yDeUTQonZCxA8G56qNmNi67e')
 
