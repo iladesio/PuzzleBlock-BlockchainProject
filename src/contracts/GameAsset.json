@@ -12,9 +12,9 @@
 				"type": "uint256[]"
 			},
 			{
-				"internalType": "uint256[]",
+				"internalType": "uint16[]",
 				"name": "prices",
-				"type": "uint256[]"
+				"type": "uint16[]"
 			},
 			{
 				"internalType": "address",
@@ -315,9 +315,9 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "uint16",
 				"name": "price",
-				"type": "uint256"
+				"type": "uint16"
 			},
 			{
 				"internalType": "uint256",
@@ -330,9 +330,9 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint8",
-				"name": "flag",
-				"type": "uint8"
+				"internalType": "bool",
+				"name": "isMinted",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -407,27 +407,14 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "uint16",
 				"name": "",
-				"type": "uint256"
+				"type": "uint16"
 			},
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getAssets",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
 			}
 		],
 		"stateMutability": "view",
