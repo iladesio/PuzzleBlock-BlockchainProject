@@ -664,7 +664,7 @@
 				"type": "string"
 			}
 		],
-		"name": "safeTransferFrom",
+		"name": "safeTransferFromTo",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"

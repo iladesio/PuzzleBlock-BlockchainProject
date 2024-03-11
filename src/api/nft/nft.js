@@ -49,6 +49,7 @@ router.post('/getMintedAsset', async (req, res) => {
             throw "Cannot read from IPFS: " + error.response.data;
         });
 
+
         //invoke post request to getPinnedImage
         await axios.post("http://localhost:3000/api/ipfs/getPinnedImage", {
             hash: asset.imageURI
@@ -87,7 +88,7 @@ router.post('/getAllMintedAsset', async (req, res) => {
             }).then((response) => {
                 assets.push(response.data);
             }).catch(function (error) {
-                throw "Cannot retrive asset with id " + result[idx] + ": " + error.response.data;
+                throw "Cannot retrieve asset with id " + result[idx] + ": " + error.response.data;
             });
         }
 

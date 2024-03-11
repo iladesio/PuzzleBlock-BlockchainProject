@@ -9,7 +9,6 @@ module.exports = Object.freeze({
     PORT: 3000,
     PINATA_GATEWAY: 'https://coral-tremendous-wasp-739.mypinata.cloud',
     PINATA_GATEWAY_2: 'https://bronze-personal-meadowlark-873.mypinata.cloud',
-    NFT_FOLDER_CID: '/ipfs/QmYVD8oRrbpFojtiQyozv3nwb7uMD2s8xpUMKdoBHztZpb',
     MIN_SCORE: 50, MAX_SCORE: 200,
     ASSETS: [
         {
@@ -19,8 +18,8 @@ module.exports = Object.freeze({
         },
         {
             "id": "2",
-            "amount": 100,
-            "price": 1000
+            "amount": 2,
+            "price": 20
         },
         {
             "id": "3",

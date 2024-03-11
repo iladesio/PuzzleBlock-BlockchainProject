@@ -72,65 +72,68 @@ router.post('/register', async (req, res) => {
         //invoke post request to localhost:3000/api/ipfs/getFiles
         await axios.post("http://localhost:3000/api/ipfs/getFiles", { username: username, type: 'profile' }).then((response) => {
             nameExists = false;
-            for (var idx = 0; idx < response.data.rows.length; idx += 1){
-            if (username === response.data.rows[idx].metadata.name) {
-                nameExists = true;
-                break;
+            for (var idx = 0; idx < response.data.rows.length; idx += 1) {
+                if (username === response.data.rows[idx].metadata.name) {
+                    nameExists = true;
+                    break;
+                }
+
+
             }
-
-        }
-        if (nameExists)
-            throw "Username already used";
-    });
-
-
-//given the address, call the PuzzleContract function of getUserInfo. 
-var web3 = new Web3(constants.GANACHE_URL);
-
-const ABI = require('../../contracts/PuzzleContract.json');
-//console.log("ABI: " + ABI)
-const contractAddress = require('../../contracts/contracts.json')["PuzzleContract"];
-//console.log("contractAddress: " + contractAddress)
-
-var contract = new web3.eth.Contract(ABI, contractAddress);
-// Get the current value of my number
-var result = await contract.methods.getUserInfo(address).call();
-if (result != 0) {
-    throw "User already registered";
-} else {
-
-    var userJson = {
-        "UserAddress": address,
-        "Username": username,
-        "PrimaryBalance": 0,
-        "SecondaryBalance": 0,
-        "Points": 0,
-        "CurrentLevel": 0,
-        "RunCompleted": 0,
-        "AmethystNumber": 0,
-        "GrimoireNumber": 0,
-        "PotionNumber": 0,
-        "PropicUrl": ""
-    }
-    try {
-        //invoke post request to localhost:3000/api/ipfs/pinJson
-        axios.post("http://localhost:3000/api/ipfs/pinJson", {
-            jsonObject: userJson,
-            filename: username,
-            type: 'profile'
-        }).then((response) => {
-            let ret = response.data;
-            console.log("User registered in IPFS with CID: " + ret);
-            res.json(ret);
+            if (nameExists) {
+                throw "Username already used";
+            }
         });
 
-    } catch (error) {
-        throw "Cannot read from IPFS: " + error.response.data;
-    }
-}
+
+        //given the address, call the PuzzleContract function of getUserInfo. 
+        var web3 = new Web3(constants.GANACHE_URL);
+
+        const ABI = require('../../contracts/PuzzleContract.json');
+        //console.log("ABI: " + ABI)
+        const contractAddress = require('../../contracts/contracts.json')["PuzzleContract"];
+        //console.log("contractAddress: " + contractAddress)
+
+        var contract = new web3.eth.Contract(ABI, contractAddress);
+        // Get the current value of my number
+        var result = await contract.methods.getUserInfo(address).call();
+        if (result != 0) {
+            throw "User already registered";
+        } else {
+
+            var userJson = {
+                "UserAddress": address,
+                "Username": username,
+                "PrimaryBalance": 0,
+                "SecondaryBalance": 0,
+                "Points": 0,
+                "CurrentLevel": 0,
+                "RunCompleted": 0,
+                "AmethystNumber": 0,
+                "GrimoireNumber": 0,
+                "PotionNumber": 0,
+                "PropicUrl": ""
+            }
+        }
+        try {
+            //invoke post request to localhost:3000/api/ipfs/pinJson
+            axios.post("http://localhost:3000/api/ipfs/pinJson", {
+                jsonObject: userJson,
+                filename: username,
+                type: 'profile'
+            }).then((response) => {
+                let ret = response.data;
+                console.log("User registered in IPFS with CID: " + ret);
+                res.json(ret);
+            });
+
+        } catch (error) {
+            throw "Cannot read from IPFS: " + error.response.data;
+        }
+
     } catch (e) {
-    res.status(500).send(e);
-}
+        res.status(500).send(e);
+    }
 });
 
 router.post('/getDifficulty', async (req, res) => {
