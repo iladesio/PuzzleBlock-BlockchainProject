@@ -5,6 +5,10 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+interface IPuzzleContract {
+    function editUser(address _userAddress, string memory _ipfsCid) external;
+}
+
 contract GameAsset is ERC1155, Ownable{
 
     // Ipfs gateway + folder where NFTs json are saved. Used to return the uri of the asset saved on the ipfs
@@ -22,13 +26,15 @@ contract GameAsset is ERC1155, Ownable{
         uint8 flag;
     }
 
+    IPuzzleContract puzzleContract;
+
     /* Constructor to initialize the contract with predefined assets.
         @param ids: Array of asset IDs.
         @param amounts: Array of amounts for each asset.
         @param prices: Array of prices for each asset.
         Requires that ids, amounts, and prices arrays are of the same length. 
     */
-    constructor(uint256[] memory ids, uint256[] memory amounts, uint256[] memory prices) 
+    constructor(uint256[] memory ids, uint256[] memory amounts, uint256[] memory prices, address _puzzleContractAddress) 
         ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmZofjbHRrXVisiCPqM3R6p7fnwT7nTXcDKMLAxUC8eWq4/{id}.json")
         Ownable(msg.sender)
     {   
@@ -38,6 +44,8 @@ contract GameAsset is ERC1155, Ownable{
         for(uint i = 0; i < ids.length; i++){
             assets[ids[i]] = Asset(ids[i], amounts[i], prices[i], 1);
         }
+
+        puzzleContract = IPuzzleContract(_puzzleContractAddress);
     }
 
     /* Function overrided to mint a batch of assets.
@@ -86,16 +94,19 @@ contract GameAsset is ERC1155, Ownable{
         @param tokenId: ID of the asset to transfer.
         @param amount: Amount of the asset to transfer.
         @param to: Address to transfer the asset to.
+        @param ipfsCid: CID of the ipfs for the edit user. 
         Requires that the asset exists, the amount is available, and the transferred value is sufficient.
     */
-    function safeTransferFrom(uint256 tokenId, uint256 amount, address to) public payable {
+    function safeTransferFrom(uint256 tokenId, uint256 amount, address to, string memory ipfsCid) public payable {
         require(assets[tokenId].flag == 1, "Not existing token");
         require(assets[tokenId].amount >= amount, "Not enough available amount of token");
-        require(assets[tokenId].price * amount  <= msg.value, "unsufficient transferred value");
+        //require(assets[tokenId].price * amount  <= msg.value, "unsufficient transferred value");
 
         _safeTransferFrom(owner(), to, tokenId, amount, "0x00");
-
+        
         assets[tokenId].amount -= amount; 
+
+        puzzleContract.editUser(to,ipfsCid);
     }
 
     /* Function overrided to safely transfer specific amounts of multiple assets to a given address.
@@ -104,24 +115,33 @@ contract GameAsset is ERC1155, Ownable{
         @param amounts Array of amounts for each asset.
         Requires that each asset ID exists, the amount for each is available, and the total transferred value is sufficient.
     */
-    function safeBatchTransferFrom(address to, uint256[] memory ids, uint256[] memory amounts) public payable {
+    function safeBatchTransferFrom(address to, uint256[] memory ids, uint256[] memory amounts, string memory ipfsCid) public payable {
+        for(uint i = 0; i < ids.length; i++) {
+            assets[ids[i]].amount -= amounts[i];
+        }
+
+        _safeBatchTransferFrom(owner(), to, ids, amounts, "0x00");
+
+        puzzleContract.editUser(to, ipfsCid);
+    }
+    
+    /* Function to retrieve the total costs of a set or single asset.
+        @param ids Array of asset IDs to transfer.
+        @param amounts Array of amounts for each asset.
+        returns the uint256 of total costs.
+    */
+    function getCost(uint256[] memory ids, uint256[] memory amounts) public view returns (uint256 total_cost) {
         require(ids.length == amounts.length, "Given arrays of ids and amounts of different lengths");
 
-        uint256 total_cost = 0;
+        total_cost = 0;
+
         for(uint i = 0; i < ids.length; i++) {
             require(assets[ids[i]].flag == 1, "Not existing asset"); // check su tutti gli id 
             require(assets[ids[i]].amount >= amounts[i], "Not enough available amount of token");
             total_cost += assets[ids[i]].price * amounts[i];
         }
 
-        require(total_cost  <= msg.value, "unsufficient transferred value");
-        
-        for(uint i = 0; i < ids.length; i++) {
-            assets[ids[i]].amount -= amounts[i];
-        }
-
-        _safeBatchTransferFrom(owner(), to, ids, amounts, "0x00");
+        return total_cost;
     }
-    
     
 }
