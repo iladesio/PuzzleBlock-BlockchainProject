@@ -18,7 +18,7 @@ contract GameAsset is ERC1155, Ownable{
     // The isMinted parameter is used to distinguish between existing NFTs [id 1-7] and all the other possible value that could be given as input. 
     mapping(uint256 => Asset) public assets;
 
-    //uint256[] id_assets;
+    uint256[] id_assets;
 
     // Struct defining a collection with its ID, price, available amount, and a isMinted to indicate its existence.
     struct Asset{
@@ -46,7 +46,7 @@ contract GameAsset is ERC1155, Ownable{
         _mintBatch(msg.sender, ids, amounts, "0x00");
         for(uint i = 0; i < ids.length; i++){
             assets[ids[i]] = Asset(ids[i], prices[i], amounts[i], block.timestamp, true);
-            //id_assets.push(ids[i]);
+            id_assets.push(ids[i]);
         }
 
         puzzleContract = IPuzzleContract(_puzzleContractAddress);
@@ -65,10 +65,10 @@ contract GameAsset is ERC1155, Ownable{
 
         _mintBatch(msg.sender, ids, amounts, data);
 
-        /*for(uint i = 0; i < ids.length; i++) {
+        for(uint i = 0; i < ids.length; i++) {
             assets[ids[i]].releaseDate = block.timestamp;
             assets[ids[i]].amount += amounts[i]; 
-        }*/
+        }
     }
 
     /* Function overrided to mint a single asset.
@@ -107,9 +107,9 @@ contract GameAsset is ERC1155, Ownable{
     /* Function to get the list of existing asset ids.
         @return list of ids
     */
-    /*function getAssets() public view returns (uint256[] memory ids){
+    function getAssets() public view returns (uint256[] memory ids){
         return (id_assets);
-    }*/
+    }
 
     /* Function overrided to safely transfer a specific amount of an asset to a given address.
         @param tokenId: ID of the asset to transfer.
