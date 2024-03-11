@@ -163,6 +163,30 @@ router.post('/getPinnedImage', async (req, res) => {
 });
 
 
+router.post('/getFolder', async (req, res) => {
+    try {
+        const { PINATA_TOKEN_2 } = process.env;
+        var url = constants.PINATA_GATEWAY_2+constants.NFT_FOLDER_CID;
+
+        console.log(url);
+     
+        header = { Authorization: 'Bearer ' + PINATA_TOKEN_2 }
+
+        await axios.get(url, {
+            headers: header
+        }).then((response) => {
+            res.json(response.data);
+        }).catch(function (err) {
+            throw "pinList error :" + err
+        });
+
+    } catch (error) {
+        res.status(500).send("Cannot retrieve profiles: " + error);
+    }
+
+});
+
+
 
 
 

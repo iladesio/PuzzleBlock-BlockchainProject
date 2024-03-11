@@ -1,5 +1,5 @@
 module.exports = Object.freeze({
-    ADMIN_ACCOUNT: '0xbB17bf7a6c0432Ec25E3ea0D53180216b0bb83B8',
+    ADMIN_ACCOUNT: '0x315882EAfFCD39D76b937Fa4Cf11a41067b2e63d',
     GANACHE_URL: 'http://127.0.0.1:7545',
     CONTRACTS : [
         { name: 'PuzzleContract'},
@@ -9,6 +9,7 @@ module.exports = Object.freeze({
     PORT: 3000,
     PINATA_GATEWAY: 'https://coral-tremendous-wasp-739.mypinata.cloud',
     PINATA_GATEWAY_2: 'https://bronze-personal-meadowlark-873.mypinata.cloud',
+    NFT_FOLDER_CID: '/ipfs/QmP5trn7zXArFij3DKksysvkdU9N2BPnAWx5ygKL9VPg4R',
     MIN_SCORE: 50, MAX_SCORE:200,
     ASSETS:[
       {

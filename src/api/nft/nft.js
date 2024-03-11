@@ -30,7 +30,8 @@ router.post('/getMintedAsset', async (req, res) => {
             "id": tokenId,
             "uri": result[0],
             "amount": Number(result[1]),
-            "price": Number(result[2])
+            "price": Number(result[2]),
+            "releaseDate": Number(result[3])
         };
 
         //invoke post request to getPinnedJson
@@ -40,8 +41,7 @@ router.post('/getMintedAsset', async (req, res) => {
         }).then((response) => {
             asset.name = response.data.name;
             asset.description = response.data.description;
-            asset.rarity = 0;//TODO CHANGE TO INT ON IPFS response.data.properties.rarity;
-            asset.releaseDate = "2023-02-16"; //
+            asset.rarity = response.data.properties.rarity;
             asset.fanciness = response.data.properties.fanciness;
             asset.imageURI = response.data.image;
             
@@ -63,6 +63,8 @@ router.post('/getMintedAsset', async (req, res) => {
     }
 
 });
+
+
 
 // Export the router
 module.exports = router;

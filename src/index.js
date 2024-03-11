@@ -15,6 +15,8 @@ async function deployContracts() {
     
     console.log("Total number of contracts to deploy:", constants.CONTRACTS.length);
 
+    var puzzleBlockAddress = "-";
+
     for (let contractData of constants.CONTRACTS) {
         const filePath = path.resolve(__dirname, './contracts/' + contractData['name'] + '.txt');
 
@@ -27,6 +29,12 @@ async function deployContracts() {
         
         //initialize collections of NFTs
         if(contractData['name'] == 'GameAsset'){
+
+            if(puzzleBlockAddress === "-"){
+                console.log("PuzzleBlock must be deployed before than GameAsset contract. Please change the order of the contracts in constants.CONTRACTS");
+                process.exit(1);
+            }
+
             var ids = [];
             var amounts = [];
             var prices = [];
@@ -42,13 +50,17 @@ async function deployContracts() {
             if(contractData['name'] == 'GameAsset'){
                 newContract = await contractInstance
                     .deploy({ data: bytecode,
-                            arguments: [ids, amounts, prices] 
+                            arguments: [ids, amounts, prices, puzzleBlockAddress] 
                     })
                     .send({ from: constants.ADMIN_ACCOUNT, gas: 4700000 });
             } else {
                 newContract = await contractInstance
                 .deploy({ data: bytecode })
                 .send({ from: constants.ADMIN_ACCOUNT, gas: 4700000 });
+
+                if(contractData["name"] == "PuzzleContract"){
+                    puzzleBlockAddress = newContract.options.address;
+                }
             }
             
             console.log("Contract Address:", newContract.options.address);
