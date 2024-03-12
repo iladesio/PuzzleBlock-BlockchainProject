@@ -1,6 +1,6 @@
 # PuzzleBlock
 
-Puzzleblock is a decentralized gaming application (DApp) designed to demystify the fundamental aspects of blockchain technology through engaging gameplay. In this journey, users will progress through various levels, have the opportunity to purchase NFTs, and discover the vast potential of the blockchain universe. Players from around the globe can compete, enhancing the learning experience by integrating the competitive spirit with educational value.
+PuzzleBlock is a decentralized gaming application (DApp) designed to demystify the fundamental aspects of blockchain technology through engaging gameplay. In this journey, users will progress through various levels, have the opportunity to purchase NFTs, and discover the vast potential of the blockchain universe. Players from around the globe can compete, enhancing the learning experience by integrating the competitive spirit with educational value.
 
 ## Getting Started
 
