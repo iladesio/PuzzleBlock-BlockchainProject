@@ -82,7 +82,9 @@ async function startEndPoint() {
     const bodyParser = require('body-parser');
     console.log("Current directory:", __dirname);
     const app = express();
-    app.use(bodyParser.json());
+    // Adjust the limit for incoming requests
+    app.use(bodyParser.json({ limit: '50mb' }));
+    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
     // Add headers before the routes are defined
     app.use(function (req, res, next) {

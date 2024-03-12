@@ -101,6 +101,31 @@ router.post('/getAllMintedAsset', async (req, res) => {
 
 });
 
+router.post('/getOwnedAssetAmount', async (req, res) => {
+    try {
+
+        var address = req.body.address;
+        var id = req.body.tokenId
+
+        //given the tokenIds, call the GameAsset contract 
+        var web3 = new Web3(constants.GANACHE_URL);
+
+        const ABI = require('../../contracts/GameAsset.json');
+
+        const contractAddress = require('../../contracts/contracts.json')["GameAsset"];
+
+        var contract = new web3.eth.Contract(ABI, contractAddress);
+        // Call the smart contract function "balanceOfBatch"
+        var result = await contract.methods.balanceOfBatch([address], [id]).call();
+
+        res.json(Number(result[0]));
+
+    } catch (e) {
+        res.status(500).send("Cannot get NFTs amount: " + e);
+    }
+
+});
+
 
 // Export the router
 module.exports = router;
