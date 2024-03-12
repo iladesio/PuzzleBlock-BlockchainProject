@@ -1,4 +1,4 @@
-# Project Title
+# PuzzleBlock
 
 Brief description of your project goes here. Explain what it does and why it's useful.
 
@@ -52,7 +52,7 @@ To play the game developed with Unity, follow these steps:
 
 ## Authors
 
-List of [contributors](LINK_TO_CONTRIBUTORS) who participated in this project.
+List of [contributors](https://github.com/iladesio/PuzzleBlock-BlockchainProject-Server/graphs/contributors) who participated in this project.
 
 ## License
 
