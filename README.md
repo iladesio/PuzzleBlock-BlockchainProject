@@ -13,7 +13,7 @@ What things you need to install the software and how to install them.
 - [Node.js and npm](https://nodejs.org/en/download/) (npm comes with Node.js)
 - [Ganache](https://www.trufflesuite.com/ganache) for a personal Ethereum blockchain
 - [Metamask](https://metamask.io/) extension for your browser
-- [Unity](https://unity.com/) Unity for development and playing the game
+- [Unity](https://unity.com/) for development and playing the game
 
 ### Launching the Server
 
