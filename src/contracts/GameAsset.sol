@@ -12,7 +12,7 @@ interface IPuzzleContract {
 contract GameAsset is ERC1155, Ownable{
 
     // Ipfs gateway + folder where NFTs json are saved. Used to return the uri of the asset saved on the ipfs
-    string public IPFS_GATEWAY = "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmSL1w9u6kZhed2BFBGFR5nempTSJqhkd7xKUSREfhmTtT/";
+    string public IPFS_GATEWAY = "https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmYgKt3yMV3yWyYNVpYGeoVczTQLVhVb9gi4EaG76cVWwg/";
     
     // This mapping is used to store the information about the available assets. If an asset is not available, it could be saved with amount 0 in deploy phase.
     // The isMinted parameter is used to distinguish between existing NFTs [id 1-7] and all the other possible value that could be given as input. 
@@ -38,7 +38,7 @@ contract GameAsset is ERC1155, Ownable{
         Requires that ids, amounts, and prices arrays are of the same length. 
     */
     constructor(uint256[] memory ids, uint256[] memory amounts, uint16[] memory prices, address _puzzleContractAddress) 
-        ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmSL1w9u6kZhed2BFBGFR5nempTSJqhkd7xKUSREfhmTtT/{id}.json")
+        ERC1155("https://bronze-personal-meadowlark-873.mypinata.cloud/ipfs/QmYgKt3yMV3yWyYNVpYGeoVczTQLVhVb9gi4EaG76cVWwg/{id}.json")
         Ownable(msg.sender)
     {   
         require(ids.length == amounts.length, "Given arrays of ids and amounts of different lengths");
