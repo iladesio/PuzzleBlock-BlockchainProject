@@ -33,6 +33,9 @@ Follow these steps to set up your local development server:
 4. **Start the Server:**
    - Open a terminal in your project directory.
    - Run the command `npm start` to launch the server.
+### Deploy Contracts (do it once)
+   - Open another terminal in your project directory.
+   - Run the command `node .\src\deploy.js` to deploy all the contracts.
 
 ### Playing the Game on Unity
 
